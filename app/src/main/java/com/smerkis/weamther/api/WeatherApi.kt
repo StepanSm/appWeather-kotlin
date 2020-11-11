@@ -8,8 +8,8 @@ import retrofit2.http.Query
 interface WeatherApi {
 
     @GET("weather?units=metric")
-    fun getWeather(
+    suspend fun getWeather(
         @Query("q") city: String,
         @Query("appid") key: String
-    ): Deferred<WeatherInfo>
+    ): WeatherInfo
 }

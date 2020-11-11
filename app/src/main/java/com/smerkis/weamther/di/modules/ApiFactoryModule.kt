@@ -1,7 +1,6 @@
 package com.smerkis.weamther.di.modules
 
 
-import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.smerkis.weamther.api.ApiFactory
@@ -11,11 +10,14 @@ import dagger.Provides
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
 
+private const val CONNECT_TIMEOUT = 10L
+
 @Module
-class ApiFactoryModule {
+open class ApiFactoryModule {
 
     @Singleton
     @Provides
@@ -29,14 +31,14 @@ class ApiFactoryModule {
     @Provides
     @Named("okhttp_logging")
     fun getOkHTTPClient(): OkHttpClient {
-        val client = OkHttpClient.Builder()
-        val logging = HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
-            override fun log(message: String) {
-                Log.d("OkHttpLogger ", message)
-            }
-        })
-        client.addInterceptor(logging)
-        return client.build()
+        val httpLoggingInterceptor = HttpLoggingInterceptor()
+        httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BASIC
+
+        return OkHttpClient.Builder().apply {
+            connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
+            retryOnConnectionFailure(true)
+            addInterceptor(httpLoggingInterceptor)
+        }.build()
     }
 
     @Provides
@@ -51,5 +53,5 @@ class ApiFactoryModule {
 
     @Provides
     @Named("weather_url")
-    fun weatherUrl(): String = WEATHER_URL
+    open fun weatherUrl(): String = WEATHER_URL
 }

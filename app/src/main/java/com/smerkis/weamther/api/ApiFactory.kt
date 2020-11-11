@@ -14,7 +14,7 @@ class ApiFactory(
         val retrofit = Retrofit.Builder()
             .baseUrl(baserUrl)
             .client(client)
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+           // .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(gsonConverterFactory)
             .build()
         return retrofit.create(T::class.java)
