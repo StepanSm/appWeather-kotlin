@@ -4,6 +4,7 @@ import android.app.Application
 import com.smerkis.weamther.di.AppComponent
 import com.smerkis.weamther.di.DaggerAppComponent
 import com.smerkis.weamther.di.modules.AppModule
+import io.paperdb.Paper
 
 class MyApp : Application() {
 
@@ -14,7 +15,7 @@ class MyApp : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
-
+        Paper.init(this)
         appComponent = DaggerAppComponent.builder().appModule(AppModule(this)).build()
     }
 
