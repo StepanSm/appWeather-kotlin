@@ -1,4 +1,4 @@
-package com.smerkis.weamther.model
+package com.smerkis.weamther.model.weather
 
 data class Coord(
     val lat: Double,

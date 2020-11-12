@@ -18,7 +18,8 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField "String", "API_KEY", localProperties['api_key_openweathermap']
+        buildConfigField "String", "KEY_WEATHER", localProperties['api_key_openweathermap']
+        buildConfigField "String", "KEY_FLICKR", localProperties['api_key_openweathermap']
     }
 
     buildTypes {

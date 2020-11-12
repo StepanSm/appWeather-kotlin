@@ -1,8 +1,9 @@
-package com.smerkis.weamther.repository
+package com.smerkis.weamther.repository.weather
 
-import com.smerkis.weamther.BuildConfig.API_KEY
 import com.smerkis.weamther.api.ApiFactory
-import com.smerkis.weamther.model.WeatherInfo
+import com.smerkis.weamther.components.KEY_WEATHER
+import com.smerkis.weamther.model.weather.WeatherInfo
+import com.smerkis.weamther.repository.BaseRepo
 import io.paperdb.Paper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -41,14 +42,10 @@ class PaperWeatherRepo(private val apiFactory: ApiFactory) : BaseRepo(), Weather
             history[city.toLowerCase(Locale.ROOT).trim()]
         }
 
-    override suspend fun downloadWeather(city: String) = flow<WeatherInfo> {
+    override suspend fun downloadWeather(city: String) = flow {
         val weather =
-            apiFactory.getWeatherApi().getWeather(city.toLowerCase(Locale.ROOT).trim(), API_KEY)
-                .body()
-        if (weather != null) {
-            emit(weather)
-        }
-
+            apiFactory.getWeatherApi().getWeather(city.toLowerCase(Locale.ROOT).trim(), KEY_WEATHER)
+        emit(weather)
     }
 
 

@@ -1,4 +1,4 @@
-package com.smerkis.weamther.model
+package com.smerkis.weamther.model.weather
 
 data class Sys(
     val country: String,
