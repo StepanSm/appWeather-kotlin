@@ -5,6 +5,7 @@ import com.smerkis.weamther.api.ApiFactory
 import com.smerkis.weamther.model.WeatherInfo
 import io.paperdb.Paper
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -13,20 +14,19 @@ private const val BOOK_WEATHER = "book_weather"
 private const val PAGE_CITY = "page_city"
 private const val PAGE_WEATHER = "page_weather"
 
-class PaperWeatherRepo(val apiFactory: ApiFactory) : BaseRepo(), WeatherRepo {
+class PaperWeatherRepo(private val apiFactory: ApiFactory) : BaseRepo(), WeatherRepo {
 
-    override fun saveCity(city: String): Flow<Boolean> =
+    override suspend fun saveCity(city: String): Flow<Boolean> = getFlow {
+        Paper.book(BOOK_CITY).write(PAGE_CITY, city.toLowerCase(Locale.ROOT).trim())
+        true
+    }
+
+    override suspend fun loadCity(): Flow<String> =
         getFlow {
-            Paper.book(BOOK_CITY).write(PAGE_CITY, city.toLowerCase(Locale.ROOT).trim())
-            true
+            Paper.book(BOOK_CITY).read(PAGE_CITY, "Kurgan")
         }
 
-    override fun loadCity(): Flow<String> =
-        getFlow {
-            Paper.book(BOOK_CITY).read<String>(PAGE_CITY, "Kurgan")
-        }
-
-    override fun saveWeather(city: String, weather: WeatherInfo): Flow<Boolean> =
+    override suspend fun saveWeather(city: String, weather: WeatherInfo): Flow<Boolean> =
         getFlow {
             val history = getHistory()
             history[city.toLowerCase(Locale.ROOT).trim()] = weather
@@ -35,17 +35,24 @@ class PaperWeatherRepo(val apiFactory: ApiFactory) : BaseRepo(), WeatherRepo {
         }
 
 
-    override fun loadWeather(city: String): Flow<WeatherInfo?> =
+    override suspend fun loadWeather(city: String): Flow<WeatherInfo?> =
         getFlow {
             val history = getHistory()
             history[city.toLowerCase(Locale.ROOT).trim()]
         }
 
-    override fun downloadWeather(city: String): Flow<WeatherInfo> {
-        return apiFactory.getWeatherApi().getWeather(city.toLowerCase(Locale.ROOT).trim(), API_KEY)
+    override suspend fun downloadWeather(city: String) = flow<WeatherInfo> {
+        val weather =
+            apiFactory.getWeatherApi().getWeather(city.toLowerCase(Locale.ROOT).trim(), API_KEY)
+                .body()
+        if (weather != null) {
+            emit(weather)
+        }
+
     }
 
-    override fun loadWeatherHistory(): Flow<HashMap<String, WeatherInfo>> =
+
+    override suspend fun loadWeatherHistory(): Flow<HashMap<String, WeatherInfo>> =
         getFlow { getHistory() }
 
     private fun getHistory(): HashMap<String, WeatherInfo> =
