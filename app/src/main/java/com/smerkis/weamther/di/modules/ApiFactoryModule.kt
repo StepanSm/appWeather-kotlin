@@ -4,6 +4,7 @@ package com.smerkis.weamther.di.modules
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.smerkis.weamther.api.ApiFactory
+import com.smerkis.weamther.components.IMAGE_URL
 import com.smerkis.weamther.components.WEATHER_URL
 import dagger.Module
 import dagger.Provides
@@ -24,8 +25,9 @@ open class ApiFactoryModule {
     fun apiFactory(
         @Named("okhttp_logging") client: OkHttpClient,
         @Named("gson") gsonConverterFactory: GsonConverterFactory,
-        @Named("weather_url") weatherUrl: String
-    ): ApiFactory = ApiFactory(client, gsonConverterFactory, weatherUrl)
+        @Named("weather_url") weatherUrl: String,
+        @Named("image_url") imageUrl: String
+    ): ApiFactory = ApiFactory(client, gsonConverterFactory, weatherUrl, imageUrl)
 
 
     @Provides
@@ -54,4 +56,8 @@ open class ApiFactoryModule {
     @Provides
     @Named("weather_url")
     open fun weatherUrl(): String = WEATHER_URL
+
+    @Provides
+    @Named("image_url")
+    open fun imageUrl() = IMAGE_URL
 }

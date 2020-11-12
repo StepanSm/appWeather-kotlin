@@ -1,6 +1,6 @@
-package com.smerkis.weamther.repository
+package com.smerkis.weamther.repository.weather
 
-import com.smerkis.weamther.model.WeatherInfo
+import com.smerkis.weamther.model.weather.WeatherInfo
 import kotlinx.coroutines.flow.Flow
 
 interface WeatherRepo {

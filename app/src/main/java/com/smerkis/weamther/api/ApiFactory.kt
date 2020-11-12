@@ -7,7 +7,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 class ApiFactory(
     private val client: OkHttpClient,
     private val gsonConverterFactory: GsonConverterFactory,
-    private val weatherUrl: String
+    private val weatherUrl: String,
+    private val imageApi: String
 ) {
     private inline fun <reified T> getApi(baserUrl: String): T {
         val retrofit = Retrofit.Builder()
@@ -19,5 +20,5 @@ class ApiFactory(
     }
 
     fun getWeatherApi(): WeatherApi = getApi(weatherUrl)
-
+    fun getImageApi(): ImageApi = getApi(imageApi)
 }

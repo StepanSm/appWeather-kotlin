@@ -1,4 +1,4 @@
-package com.smerkis.weamther.model
+package com.smerkis.weamther.model.weather
 
 data class Main(
     val feels_like: Double,

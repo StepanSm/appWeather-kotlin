@@ -1,8 +1,8 @@
 package com.smerkis.weamther.di.modules
 
 import com.smerkis.weamther.api.ApiFactory
-import com.smerkis.weamther.repository.PaperWeatherRepo
-import com.smerkis.weamther.repository.WeatherRepo
+import com.smerkis.weamther.repository.weather.PaperWeatherRepo
+import com.smerkis.weamther.repository.weather.WeatherRepo
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
