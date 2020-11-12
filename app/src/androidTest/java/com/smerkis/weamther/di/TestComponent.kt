@@ -3,7 +3,6 @@ package com.smerkis.weamther.di
 import com.smerkis.weamther.ImageRepoInstrumentalTest
 import com.smerkis.weamther.WeatherRepoInstrumentalTest
 import com.smerkis.weamther.di.modules.ApiFactoryModule
-import com.smerkis.weamther.di.modules.AppModule
 import com.smerkis.weamther.di.modules.ImageRepoModule
 import com.smerkis.weamther.di.modules.WeatherRepoModule
 import dagger.Component
