@@ -10,7 +10,6 @@ import com.smerkis.weamther.repository.image.ImageRepo
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.MockResponse
-import org.junit.Assert
 import org.junit.Assert.*
 import org.junit.Test
 import javax.inject.Inject

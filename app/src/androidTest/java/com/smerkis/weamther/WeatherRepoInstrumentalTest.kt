@@ -47,7 +47,6 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
         testComponent.inject(this)
     }
 
-
     @Test
     fun appName() {
         assertEquals(app.appName, "weaMther")
