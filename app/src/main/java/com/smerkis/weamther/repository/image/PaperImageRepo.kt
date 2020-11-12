@@ -17,8 +17,7 @@ private const val BOOK_IMAGES = "book_image"
 class PaperImageRepo(val apiFactory: ApiFactory) : BaseRepo(), ImageRepo {
 
     override suspend fun getPhotoListFromFlickr(city: String) = flow<FlickrResponse> {
-        val image = apiFactory.getImageApi().getImages(city)
-        emit(image)
+        emit(apiFactory.getImageApi().getImages(city))
     }
 
     override suspend fun getRandomPhotoUrl(city: String) = flow {
