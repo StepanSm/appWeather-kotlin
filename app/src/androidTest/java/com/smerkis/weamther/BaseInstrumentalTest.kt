@@ -2,7 +2,6 @@ package com.smerkis.weamther
 
 import android.util.Log
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.smerkis.weamther.model.weather.WeatherInfo
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
