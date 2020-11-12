@@ -1,7 +1,6 @@
 package com.smerkis.weamther.api
 
-import com.smerkis.weamther.model.weather.WeatherInfo
-import retrofit2.Response
+import com.smerkis.weamther.model.WeatherInfo
 import retrofit2.http.GET
 import retrofit2.http.Query
 

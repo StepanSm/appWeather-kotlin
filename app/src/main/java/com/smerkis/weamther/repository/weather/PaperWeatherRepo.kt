@@ -2,7 +2,7 @@ package com.smerkis.weamther.repository.weather
 
 import com.smerkis.weamther.api.ApiFactory
 import com.smerkis.weamther.components.KEY_WEATHER
-import com.smerkis.weamther.model.weather.WeatherInfo
+import com.smerkis.weamther.model.WeatherInfo
 import com.smerkis.weamther.repository.BaseRepo
 import io.paperdb.Paper
 import kotlinx.coroutines.flow.Flow

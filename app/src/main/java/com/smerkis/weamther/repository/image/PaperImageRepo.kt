@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.os.Environment
 import com.smerkis.weamther.MyApp
 import com.smerkis.weamther.api.ApiFactory
-import com.smerkis.weamther.model.image.FlickrResponse
+import com.smerkis.weamther.model.FlickrResponse
 import com.smerkis.weamther.repository.BaseRepo
 import io.paperdb.Paper
 import kotlinx.coroutines.flow.flow
@@ -16,7 +16,7 @@ private const val BOOK_IMAGES = "book_image"
 
 class PaperImageRepo(val apiFactory: ApiFactory) : BaseRepo(), ImageRepo {
 
-    override suspend fun getPhotoList(city: String) = flow<FlickrResponse> {
+    override suspend fun getPhotoListFromFlickr(city: String) = flow<FlickrResponse> {
         emit(apiFactory.getImageApi().getImages(city))
     }
 
