@@ -1,10 +1,9 @@
 package com.smerkis.weamther.di
 
-import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import com.smerkis.weamther.MyApp
-import com.smerkis.weamther.SplashActivity
-import com.smerkis.weamther.SplashViewModel
+import com.smerkis.weamther.activities.SplashActivity
+import com.smerkis.weamther.viewModels.SplashViewModel
 import com.smerkis.weamther.di.modules.*
 import dagger.BindsInstance
 import dagger.Component

@@ -1,7 +1,8 @@
-package com.smerkis.weamther
+package com.smerkis.weamther.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.smerkis.weamther.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

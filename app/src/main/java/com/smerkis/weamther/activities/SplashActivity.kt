@@ -1,4 +1,4 @@
-package com.smerkis.weamther
+package com.smerkis.weamther.activities
 
 import androidx.appcompat.app.AppCompatActivity
 

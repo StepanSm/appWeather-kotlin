@@ -1,4 +1,4 @@
-package com.smerkis.weamther
+package com.smerkis.weamther.viewModels
 
 import androidx.lifecycle.ViewModel
 
