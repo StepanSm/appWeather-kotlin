@@ -53,7 +53,7 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
     }
 
     @Test
-    fun weatherApiTest() {
+    fun weather_api_test() {
         mockResponse()
         runBlocking {
             val result = apiFactory.getWeatherApi().getWeather(TEST_CITY, KEY_WEATHER)
@@ -63,7 +63,7 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
     }
 
     @Test
-    fun saveCityOk() {
+    fun save_city_ok() {
         mockResponse()
         runBlocking {
             weatherRepo.saveCity(TEST_CITY).take(1)
@@ -72,7 +72,7 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
     }
 
     @Test
-    fun loadCityOk() {
+    fun load_list_Ok() {
         mockResponse()
         runBlocking {
             weatherRepo.loadCity().take(1)
@@ -81,7 +81,7 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
     }
 
     @Test
-    fun downloadWeatherOk() {
+    fun download_weather_Ok() {
         mockResponse()
         runBlocking {
             weatherRepo.downloadWeather(TEST_CITY).take(1).collect { weatherInfo ->
@@ -93,7 +93,7 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
     }
 
     @Test
-    fun saveWeatherOk() {
+    fun save_weather_Ok() {
         mockResponse()
         runBlocking {
             testWeather = apiFactory.getWeatherApi().getWeather(TEST_CITY, KEY_WEATHER)
@@ -116,7 +116,7 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
     }
 
     @Test
-    fun loadWeatherHistoryOk() {
+    fun load_weather_history_Ok() {
         mockResponse()
         runBlocking {
             weatherRepo.loadWeatherHistory().take(1).collect { loadedWeather ->
