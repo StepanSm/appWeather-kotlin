@@ -2,10 +2,10 @@ package com.smerkis.weamther
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import com.smerkis.weamther.di.AppModule
 import com.smerkis.weamther.di.DaggerTestComponent
 import com.smerkis.weamther.di.TestComponent
 import com.smerkis.weamther.di.modules.ApiFactoryModule
-import com.smerkis.weamther.di.modules.AppModule
 import com.smerkis.weamther.repository.image.ImageRepo
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking

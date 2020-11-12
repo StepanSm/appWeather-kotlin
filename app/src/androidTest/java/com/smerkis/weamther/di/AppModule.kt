@@ -1,4 +1,4 @@
-package com.smerkis.weamther.di.modules
+package com.smerkis.weamther.di
 
 import com.smerkis.weamther.MyApp
 import dagger.Module

@@ -3,10 +3,10 @@ package com.smerkis.weamther
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.smerkis.weamther.api.ApiFactory
 import com.smerkis.weamther.components.KEY_WEATHER
+import com.smerkis.weamther.di.AppModule
 import com.smerkis.weamther.di.DaggerTestComponent
 import com.smerkis.weamther.di.TestComponent
 import com.smerkis.weamther.di.modules.ApiFactoryModule
-import com.smerkis.weamther.di.modules.AppModule
 import com.smerkis.weamther.model.WeatherInfo
 import com.smerkis.weamther.repository.weather.WeatherRepo
 import kotlinx.coroutines.flow.collect
