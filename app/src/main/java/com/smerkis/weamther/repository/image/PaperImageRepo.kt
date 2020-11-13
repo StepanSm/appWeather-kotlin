@@ -21,6 +21,7 @@ class PaperImageRepo(val apiFactory: ApiFactory) : BaseRepo(), ImageRepo {
     }
 
     override suspend fun getRandomPhotoUrl(city: String) = flow {
+
         val photos = apiFactory.getImageApi().getImages(city)
         if (photos.photos.photo.isNotEmpty()) {
             emit(getUrlFromPhotos(photos))

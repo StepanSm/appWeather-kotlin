@@ -10,11 +10,16 @@ class MyApp : Application() {
 
     val appName: String
         get() = resources.getString(R.string.app_name)
+
     private lateinit var appComponent: AppComponent
     private lateinit var viewModelSubComponent: ViewModelSubComponent
 
     fun getAppComponent(): AppComponent {
         return appComponent
+    }
+
+    fun getViewModelSubComponent(): ViewModelSubComponent {
+        return viewModelSubComponent
     }
 
     override fun onCreate() {

@@ -2,6 +2,7 @@ package com.smerkis.weamther.components
 
 import com.smerkis.weamther.BuildConfig
 
+
 const val KEY_WEATHER = BuildConfig.KEY_WEATHER
 const val KEY_FLICKR = BuildConfig.KEY_FLICKR
 const val WEATHER_URL = "http://api.openweathermap.org/data/2.5/"

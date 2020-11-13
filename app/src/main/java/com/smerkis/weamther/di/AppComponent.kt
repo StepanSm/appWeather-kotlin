@@ -1,10 +1,15 @@
 package com.smerkis.weamther.di
 
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
 import com.smerkis.weamther.MyApp
-import com.smerkis.weamther.activities.SplashActivity
+import com.smerkis.weamther.di.modules.ActivityModule
+import com.smerkis.weamther.di.modules.ApiFactoryModule
+import com.smerkis.weamther.di.modules.ImageRepoModule
+import com.smerkis.weamther.di.modules.WeatherRepoModule
+import com.smerkis.weamther.fragments.MainFragment
+import com.smerkis.weamther.fragments.SplashFragment
+import com.smerkis.weamther.viewModels.MainViewModel
 import com.smerkis.weamther.viewModels.SplashViewModel
-import com.smerkis.weamther.di.modules.*
 import dagger.BindsInstance
 import dagger.Component
 import dagger.Subcomponent
@@ -39,6 +44,7 @@ interface ViewModelSubComponent {
     }
 
     fun inject(vModel: SplashViewModel)
+    fun inject(vModel: MainViewModel)
 
 }
 
@@ -47,10 +53,12 @@ interface ActivitySubComponent {
     @Subcomponent.Builder
     interface Builder {
         @BindsInstance
-        fun with(activity: AppCompatActivity): Builder
+        fun with(activity: FragmentActivity): Builder
         fun build(): ActivitySubComponent
     }
 
-    fun inject(splashActivity: SplashActivity)
+    fun inject(splashActivity: SplashFragment)
+    fun inject(mainFragment: MainFragment)
+
 
 }

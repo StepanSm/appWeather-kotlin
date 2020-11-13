@@ -1,11 +1,14 @@
 package com.smerkis.weamther.repository.weather
 
 import com.smerkis.weamther.api.ApiFactory
+import com.smerkis.weamther.components.CELSIUM
 import com.smerkis.weamther.components.KEY_WEATHER
 import com.smerkis.weamther.model.WeatherInfo
 import com.smerkis.weamther.repository.BaseRepo
 import io.paperdb.Paper
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import java.util.*
 import kotlin.collections.HashMap
@@ -27,6 +30,11 @@ class PaperWeatherRepo(private val apiFactory: ApiFactory) : BaseRepo(), Weather
             Paper.book(BOOK_CITY).read(PAGE_CITY, "Kurgan")
         }
 
+    override suspend fun loadLastWeather()= flow<WeatherInfo?> {
+         loadCity().collect {
+                 city -> loadWeather(city) }
+    }
+
     override suspend fun saveWeather(city: String, weather: WeatherInfo): Flow<Boolean> =
         getFlow {
             val history = getHistory()
@@ -40,6 +48,8 @@ class PaperWeatherRepo(private val apiFactory: ApiFactory) : BaseRepo(), Weather
         getFlow {
             val history = getHistory()
             history[city.toLowerCase(Locale.ROOT).trim()]
+        }.catch {
+            println()
         }
 
     override suspend fun downloadWeather(city: String) = flow {
