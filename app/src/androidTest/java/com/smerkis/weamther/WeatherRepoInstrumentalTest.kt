@@ -8,14 +8,19 @@ import com.smerkis.weamther.di.DaggerTestComponent
 import com.smerkis.weamther.di.TestComponent
 import com.smerkis.weamther.di.modules.ApiFactoryModule
 import com.smerkis.weamther.model.WeatherInfo
+import com.smerkis.weamther.repository.Result
 import com.smerkis.weamther.repository.weather.WeatherRepo
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.MockResponse
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertSame
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.lang.ClassCastException
+import java.lang.Error
 import javax.inject.Inject
 
 const val TEST_CITY = "Kurgan"
@@ -58,7 +63,7 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
         runBlocking {
             val result = apiFactory.getWeatherApi().getWeather(TEST_CITY, KEY_WEATHER)
             assertEquals(result.name, TEST_CITY)
-            assertEquals(result.weather.get(0).id, TEST_ID)
+            assertEquals(result.weather[0].id, TEST_ID)
         }
     }
 
@@ -67,7 +72,7 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
         mockResponse()
         runBlocking {
             weatherRepo.saveCity(TEST_CITY).take(1)
-                .collect { assertEquals(it, true) }
+                .collect { assertEquals((it as Result.Success).data, true) }
         }
     }
 
@@ -76,7 +81,9 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
         mockResponse()
         runBlocking {
             weatherRepo.loadCity().take(1)
-                .collect { assertEquals(it, TEST_CITY.toLowerCase()) }
+                .collect {
+                    it as Result.Success
+                    assertEquals(it.data, TEST_CITY.toLowerCase()) }
         }
     }
 
@@ -84,7 +91,10 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
     fun download_weather_Ok() {
         mockResponse()
         runBlocking {
-            weatherRepo.downloadWeather(TEST_CITY).take(1).collect { weatherInfo ->
+            weatherRepo.downloadWeather(TEST_CITY).take(1).collect {
+
+                val weatherInfo = (it as Result.Success).data
+
                 assertEquals(weatherInfo.name, TEST_CITY)
                 assertEquals(weatherInfo.weather[0].id, TEST_ID)
                 assertEquals(weatherInfo.main.temp, TEST_TEMPERATURE, 0.0)
@@ -98,7 +108,9 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
         runBlocking {
             testWeather = apiFactory.getWeatherApi().getWeather(TEST_CITY, KEY_WEATHER)
             weatherRepo.saveWeather(TEST_CITY, testWeather).take(1)
-                .collect { assertEquals(it, true) }
+                .collect {
+                    it as Result.Success
+                    assertEquals(it.data, true) }
         }
     }
 
@@ -107,7 +119,10 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
         mockResponse()
         runBlocking {
             testWeather = apiFactory.getWeatherApi().getWeather(TEST_CITY, KEY_WEATHER)
-            weatherRepo.loadWeather(TEST_CITY).take(1).collect { loadedWeather ->
+            weatherRepo.loadWeather(TEST_CITY).take(1).collect {
+
+                val loadedWeather = (it as Result.Success).data
+
                 assertEquals(testWeather.name, loadedWeather?.name)
                 assertEquals(testWeather.weather[0].id, loadedWeather?.weather?.get(0)?.id)
                 assertEquals(testWeather.main.temp, loadedWeather?.main?.temp)
@@ -119,11 +134,22 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
     fun load_weather_history_Ok() {
         mockResponse()
         runBlocking {
-            weatherRepo.loadWeatherHistory().take(1).collect { loadedWeather ->
-                assertEquals(1, loadedWeather.size)
+            weatherRepo.loadWeatherHistory().take(1).collect {
+                assertEquals(1, (it as Result.Success).data.size)
             }
         }
 
+    }
+
+
+    @Test(expected = ClassCastException::class)
+    fun cce() {
+        mockResponse()
+        runBlocking {
+            weatherRepo.downloadWeather(TEST_CITY).take(1).collect {
+                it as Result.Error
+            }
+        }
     }
 
     override fun createResponse(): MockResponse {

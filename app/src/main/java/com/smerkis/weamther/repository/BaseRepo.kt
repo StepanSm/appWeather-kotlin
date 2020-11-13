@@ -7,10 +7,12 @@ import kotlinx.coroutines.flow.flowOn
 
 abstract class BaseRepo {
 
-    protected suspend fun <T> getFlow(call: () -> T?) = flow {
-        val t = call.invoke()
-        if (t != null) {
-            emit(t)
+    protected suspend fun <T> getFlow(call: () -> T) = flow<Result<T>> {
+        call.invoke()?.let {
+            emit(Result.Success(it))
         }
-    }.flowOn(Dispatchers.IO).catch {  }
+    } .catch {
+        emit(Result.Error(it))
+    }.flowOn(Dispatchers.IO)
+
 }

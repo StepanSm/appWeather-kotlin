@@ -6,7 +6,9 @@ import com.smerkis.weamther.MyApp
 import com.smerkis.weamther.api.ApiFactory
 import com.smerkis.weamther.model.FlickrResponse
 import com.smerkis.weamther.repository.BaseRepo
+import com.smerkis.weamther.repository.Result
 import io.paperdb.Paper
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import java.io.File
 import java.io.FileOutputStream
@@ -24,8 +26,10 @@ class PaperImageRepo(val apiFactory: ApiFactory) : BaseRepo(), ImageRepo {
 
         val photos = apiFactory.getImageApi().getImages(city)
         if (photos.photos.photo.isNotEmpty()) {
-            emit(getUrlFromPhotos(photos))
+            emit(Result.Success(getUrlFromPhotos(photos)))
         }
+    }.catch {
+        Result.Error(it)
     }
 
     override suspend fun writeToCache(bitmap: Bitmap, city: String) =
@@ -57,6 +61,8 @@ class PaperImageRepo(val apiFactory: ApiFactory) : BaseRepo(), ImageRepo {
         getFlow {
             Paper.book(BOOK_IMAGES).read<File?>(city.toLowerCase(Locale.getDefault()).trim())
         }
+
+
 
     private fun String.toUUID() = UUID.nameUUIDFromBytes(this.toByteArray()).toString()
 

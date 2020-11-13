@@ -74,7 +74,6 @@ dependencies {
     kaptTest "com.google.dagger:dagger-compiler:$daggerVer"
 
     def retrofitVer = "2.9.0"
-    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVer"
     implementation "com.squareup.retrofit2:retrofit:$retrofitVer"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVer"
     implementation 'com.squareup.okhttp3:logging-interceptor:4.4.1'
@@ -83,6 +82,8 @@ dependencies {
 
     //Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+
+    implementation 'com.jakewharton.timber:timber:4.7.1'
 
 //    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
 //    kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"

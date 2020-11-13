@@ -6,6 +6,7 @@ import com.smerkis.weamther.di.AppModule
 import com.smerkis.weamther.di.DaggerTestComponent
 import com.smerkis.weamther.di.TestComponent
 import com.smerkis.weamther.di.modules.ApiFactoryModule
+import com.smerkis.weamther.repository.Result
 import com.smerkis.weamther.repository.image.ImageRepo
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
@@ -52,7 +53,8 @@ class ImageRepoInstrumentalTest : BaseInstrumentalTest() {
         mockResponse()
         runBlocking {
             imageRepo.writeToCache(bitmapMock, TEST_CITY).collect {
-                assertEquals(true, it)
+                it as Result.Success
+                assertEquals(true, it.data)
             }
         }
     }
@@ -62,7 +64,8 @@ class ImageRepoInstrumentalTest : BaseInstrumentalTest() {
         mockResponse()
         runBlocking {
             imageRepo.getImageFileFromCache(TEST_CITY).collect {
-                val bitmap = BitmapFactory.decodeFile(it?.absolutePath)
+                it as Result.Success
+                val bitmap = BitmapFactory.decodeFile(it.data?.absolutePath)
                 assertEquals(bitmap.width, bitmapMock.width)
             }
         }
@@ -73,7 +76,9 @@ class ImageRepoInstrumentalTest : BaseInstrumentalTest() {
         mockResponse()
         runBlocking {
             imageRepo.getRandomPhotoUrl(TEST_CITY).collect {
-                assertEquals(it, TEST_URL)
+                it as Result.Success
+
+                assertEquals(it.data, TEST_URL)
             }
         }
     }

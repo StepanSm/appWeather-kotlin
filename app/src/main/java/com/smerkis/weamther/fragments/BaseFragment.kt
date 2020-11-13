@@ -12,6 +12,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavArgs
+import androidx.navigation.fragment.navArgs
 import com.smerkis.weamther.R
 import com.smerkis.weamther.activities.MainNavigator
 
@@ -27,21 +29,6 @@ abstract class BaseFragment<VM : ViewModel, B : ViewDataBinding>(private val lay
     }
 
     abstract fun initDi()
-
-    @SuppressLint("LongNotTimber")
-    fun logD(msg: String) {
-        Log.d(this.javaClass.simpleName + "TAG", msg)
-    }
-
-    @SuppressLint("LongNotTimber")
-    fun logE(msg: String) {
-        Log.e(this.javaClass.simpleName + "TAG", msg)
-    }
-
-    @SuppressLint("LongNotTimber")
-    fun logI(msg: String) {
-        Log.i(this.javaClass.simpleName + "TAG", msg)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,4 +51,5 @@ abstract class BaseFragment<VM : ViewModel, B : ViewDataBinding>(private val lay
             .create()
             .show()
     }
+
 }

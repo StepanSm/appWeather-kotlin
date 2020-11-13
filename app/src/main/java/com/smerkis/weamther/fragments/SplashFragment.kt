@@ -2,6 +2,8 @@ package com.smerkis.weamther.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.smerkis.weamther.MyApp
 import com.smerkis.weamther.R
 import com.smerkis.weamther.activities.Layout
@@ -12,6 +14,8 @@ import javax.inject.Inject
 
 class SplashFragment :
     BaseFragment<SplashViewModel, FragmentSplashBinding>(R.layout.fragment_splash) {
+
+
     override fun initDi() {
         MyApp.instance.getAppComponent()
             .activitySubComponentBuilder()
@@ -34,7 +38,7 @@ class SplashFragment :
         }
 
         viewModel.imageUrlData.observe(viewLifecycleOwner) { url ->
-            logD("url: $url")
+
         }
 
         viewModel.weatherInfoData.observe(viewLifecycleOwner) {
@@ -42,6 +46,9 @@ class SplashFragment :
         }
 
         binding.viewModel?.loadCityName()
+
+        findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToMainFragment())
+
     }
 
 

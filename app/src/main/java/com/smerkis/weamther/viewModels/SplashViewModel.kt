@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.smerkis.weamther.model.WeatherInfo
+import com.smerkis.weamther.repository.ErrorHandler
+import com.smerkis.weamther.repository.Result
 import com.smerkis.weamther.repository.image.ImageRepo
 import com.smerkis.weamther.repository.weather.WeatherRepo
 import kotlinx.coroutines.flow.*
@@ -27,24 +29,26 @@ class SplashViewModel : AbstractViewModel() {
         println()
         viewModelScope.launch {
             weatherRepo.loadCity()
-                .catch {
-                    errorData.value = it }
-                .collect { city ->
-                    weatherRepo.downloadWeather(city)
-                        .catch {
-                            errorData.value = it }
-                        .collect { weather ->
-                            weatherRepo.saveWeather(city, weather)
-                                .catch {
-                                    errorData.value = it }
-                            imageRepo.getRandomPhotoUrl(city)
-                                .catch {
-                                    errorData.value = it }
-                                .collect { imageUrl ->
-                                    imageUrlData.value = imageUrl
+                .collect { cityResult ->
+                    when (cityResult) {
+                        is Result.Success -> weatherRepo.downloadWeather(cityResult.data).collect {resultWeather ->
+                            when(resultWeather){
+                                is Result.Success -> weatherRepo.saveWeather(cityResult.data, resultWeather.data).collect { resultSaveWeather ->
+                                    when(resultSaveWeather){
+                                        is Result.Success -> imageRepo.getRandomPhotoUrl(cityResult.data).collect { photoUrl ->
+                                            when(photoUrl){
+                                                is Result.Success -> imageUrlData.value = photoUrl.data
+                                                is Result.Error -> errorData.value = photoUrl.exception
+                                            }
+                                        }
+                                        is Result.Error -> errorData.value = resultSaveWeather.exception
+                                    }
                                 }
-                            weatherInfoData.value = weather
+                                is Result.Error -> errorData.value = resultWeather.exception
+                            }
                         }
+                        is Result.Error -> errorData.value = cityResult.exception
+                    }
                 }
         }
 
