@@ -58,7 +58,7 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
         runBlocking {
             val result = apiFactory.getWeatherApi().getWeather(TEST_CITY, KEY_WEATHER)
             assertEquals(result.name, TEST_CITY)
-            assertEquals(result.weather.get(0).id, TEST_ID)
+            assertEquals(result.weather[0].id, TEST_ID)
         }
     }
 
@@ -67,7 +67,9 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
         mockResponse()
         runBlocking {
             weatherRepo.saveCity(TEST_CITY).take(1)
-                .collect { assertEquals(it, true) }
+                .collect {
+                    assertEquals(it, true)
+                }
         }
     }
 
@@ -76,7 +78,9 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
         mockResponse()
         runBlocking {
             weatherRepo.loadCity().take(1)
-                .collect { assertEquals(it, TEST_CITY.toLowerCase()) }
+                .collect {
+                    assertEquals(it, TEST_CITY.toLowerCase())
+                }
         }
     }
 
@@ -85,6 +89,8 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
         mockResponse()
         runBlocking {
             weatherRepo.downloadWeather(TEST_CITY).take(1).collect { weatherInfo ->
+
+
                 assertEquals(weatherInfo.name, TEST_CITY)
                 assertEquals(weatherInfo.weather[0].id, TEST_ID)
                 assertEquals(weatherInfo.main.temp, TEST_TEMPERATURE, 0.0)
@@ -98,7 +104,9 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
         runBlocking {
             testWeather = apiFactory.getWeatherApi().getWeather(TEST_CITY, KEY_WEATHER)
             weatherRepo.saveWeather(TEST_CITY, testWeather).take(1)
-                .collect { assertEquals(it, true) }
+                .collect {
+                    assertEquals(it, true)
+                }
         }
     }
 
@@ -107,7 +115,9 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
         mockResponse()
         runBlocking {
             testWeather = apiFactory.getWeatherApi().getWeather(TEST_CITY, KEY_WEATHER)
-            weatherRepo.loadWeather(TEST_CITY).take(1).collect { loadedWeather ->
+            weatherRepo.loadWeather(TEST_CITY).take(1).collect {loadedWeather->
+
+
                 assertEquals(testWeather.name, loadedWeather?.name)
                 assertEquals(testWeather.weather[0].id, loadedWeather?.weather?.get(0)?.id)
                 assertEquals(testWeather.main.temp, loadedWeather?.main?.temp)
@@ -119,13 +129,12 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
     fun load_weather_history_Ok() {
         mockResponse()
         runBlocking {
-            weatherRepo.loadWeatherHistory().take(1).collect { loadedWeather ->
-                assertEquals(1, loadedWeather.size)
+            weatherRepo.loadWeatherHistory().take(1).collect {
+                assertEquals(1, it.size)
             }
         }
 
     }
-
     override fun createResponse(): MockResponse {
         val json = """{
     "coord": {

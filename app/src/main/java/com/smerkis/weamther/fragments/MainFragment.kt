@@ -5,9 +5,13 @@ import com.smerkis.weamther.MyApp
 import com.smerkis.weamther.R
 import com.smerkis.weamther.databinding.FragmentMainBinding
 import com.smerkis.weamther.viewModels.MainViewModel
+import kotlinx.android.synthetic.main.fragment_main.*
 import javax.inject.Inject
 
 class MainFragment : BaseFragment<MainViewModel, FragmentMainBinding>(R.layout.fragment_main) {
+
+
+
     override fun initDi() {
         MyApp.instance.getAppComponent()
             .activitySubComponentBuilder()
@@ -21,6 +25,7 @@ class MainFragment : BaseFragment<MainViewModel, FragmentMainBinding>(R.layout.f
 
     override fun onStart() {
         super.onStart()
+        text
         MyApp.instance.getViewModelSubComponent().inject(viewModel)
         binding.viewModel = viewModel
         viewModel.weatherInfo.observe(viewLifecycleOwner) {
@@ -28,5 +33,7 @@ class MainFragment : BaseFragment<MainViewModel, FragmentMainBinding>(R.layout.f
         }
 
         viewModel.load()
+
+
     }
 }

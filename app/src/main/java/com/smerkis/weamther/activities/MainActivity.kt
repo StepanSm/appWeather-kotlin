@@ -1,10 +1,10 @@
 package com.smerkis.weamther.activities
 
+import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
+import androidx.navigation.NavDirections
 import androidx.navigation.Navigation
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
@@ -20,6 +20,7 @@ enum class Layout(val id: Int) {
 class MainActivity : FragmentActivity(), MainNavigator {
 
     private lateinit var nav: NavController
+
     private val weatherWorker = PeriodicWorkRequest.Builder(
         WeatherWorker::class.java,
         PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS,
@@ -36,15 +37,15 @@ class MainActivity : FragmentActivity(), MainNavigator {
     }
 
     override fun navigateTo(layout: Layout) {
-        Log.d("MainActivity", "onNextFragment id = $layout")
         nav.navigate(layout.id)
+    }
+
+    @SuppressLint("LogNotTimber")
+    override fun navigateTo(directions: NavDirections) {
+        nav.navigate(directions)
     }
 
     override fun closeApp() {
         finish()
-    }
-
-    override fun toast(msg: String) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 }

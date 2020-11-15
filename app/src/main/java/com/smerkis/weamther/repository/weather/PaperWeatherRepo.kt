@@ -6,7 +6,6 @@ import com.smerkis.weamther.model.WeatherInfo
 import com.smerkis.weamther.repository.BaseRepo
 import io.paperdb.Paper
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.*
 import java.util.*
 import kotlin.collections.HashMap
