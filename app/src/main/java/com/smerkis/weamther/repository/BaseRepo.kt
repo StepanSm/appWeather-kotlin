@@ -1,9 +1,6 @@
 package com.smerkis.weamther.repository
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 
 abstract class BaseRepo {
 
@@ -12,5 +9,5 @@ abstract class BaseRepo {
         if (t != null) {
             emit(t)
         }
-    }.flowOn(Dispatchers.IO).catch {  }
+    }
 }

@@ -1,9 +1,5 @@
 package com.smerkis.weamther.fragments
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
 import com.smerkis.weamther.MyApp
 import com.smerkis.weamther.R
@@ -27,7 +23,7 @@ class MainFragment : BaseFragment<MainViewModel, FragmentMainBinding>(R.layout.f
         super.onStart()
         MyApp.instance.getViewModelSubComponent().inject(viewModel)
         binding.viewModel = viewModel
-        viewModel.weatherDummie.observe(viewLifecycleOwner) {
+        viewModel.weatherInfo.observe(viewLifecycleOwner) {
             binding.text.text = it
         }
 

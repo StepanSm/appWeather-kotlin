@@ -2,6 +2,7 @@ package com.smerkis.weamther.di
 
 import androidx.fragment.app.FragmentActivity
 import com.smerkis.weamther.MyApp
+import com.smerkis.weamther.worker.WeatherWorker
 import com.smerkis.weamther.di.modules.ActivityModule
 import com.smerkis.weamther.di.modules.ApiFactoryModule
 import com.smerkis.weamther.di.modules.ImageRepoModule
@@ -34,6 +35,7 @@ interface AppComponent {
 
     fun viewModelSubComponentBuilder(): ViewModelSubComponent.Builder
     fun activitySubComponentBuilder(): ActivitySubComponent.Builder
+    fun workerSubComponentBuilder(): WorkerSubComponent.Builder
 }
 
 @Subcomponent
@@ -45,7 +47,6 @@ interface ViewModelSubComponent {
 
     fun inject(vModel: SplashViewModel)
     fun inject(vModel: MainViewModel)
-
 }
 
 @Subcomponent(modules = [ActivityModule::class])
@@ -59,6 +60,14 @@ interface ActivitySubComponent {
 
     fun inject(splashActivity: SplashFragment)
     fun inject(mainFragment: MainFragment)
+}
 
+@Subcomponent
+interface WorkerSubComponent {
+    @Subcomponent.Builder
+    interface Builder {
+        fun build(): WorkerSubComponent
+    }
 
+    fun inject(worker: WeatherWorker)
 }

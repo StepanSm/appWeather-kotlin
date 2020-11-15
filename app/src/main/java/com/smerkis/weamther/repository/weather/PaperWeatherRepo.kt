@@ -1,15 +1,13 @@
 package com.smerkis.weamther.repository.weather
 
 import com.smerkis.weamther.api.ApiFactory
-import com.smerkis.weamther.components.CELSIUM
 import com.smerkis.weamther.components.KEY_WEATHER
 import com.smerkis.weamther.model.WeatherInfo
 import com.smerkis.weamther.repository.BaseRepo
 import io.paperdb.Paper
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.*
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -18,11 +16,15 @@ private const val BOOK_WEATHER = "book_weather"
 private const val PAGE_CITY = "page_city"
 private const val PAGE_WEATHER = "page_weather"
 
+@FlowPreview
 class PaperWeatherRepo(private val apiFactory: ApiFactory) : BaseRepo(), WeatherRepo {
 
-    override suspend fun saveCity(city: String): Flow<Boolean> = getFlow {
-        Paper.book(BOOK_CITY).write(PAGE_CITY, city.toLowerCase(Locale.ROOT).trim())
-        true
+    override suspend fun saveCity(city: String): Flow<Boolean> = flow {
+        Paper.book(BOOK_CITY).write(PAGE_CITY, city.toLowerCase(Locale.ROOT).trim())?.apply {
+            emit(true)
+        }
+    }.catch {
+        println()
     }
 
     override suspend fun loadCity(): Flow<String> =
@@ -30,17 +32,25 @@ class PaperWeatherRepo(private val apiFactory: ApiFactory) : BaseRepo(), Weather
             Paper.book(BOOK_CITY).read(PAGE_CITY, "Kurgan")
         }
 
-    override suspend fun loadLastWeather()= flow<WeatherInfo?> {
-         loadCity().collect {
-                 city -> loadWeather(city) }
+    override suspend fun loadLastWeather() = flow {
+        loadCity().flatMapConcat { city ->
+            loadWeather(city).map {
+                emit(it)
+            }
+        }
+    }.catch {
+        println()
     }
 
     override suspend fun saveWeather(city: String, weather: WeatherInfo): Flow<Boolean> =
-        getFlow {
+        flow {
             val history = getHistory()
             history[city.toLowerCase(Locale.ROOT).trim()] = weather
-            Paper.book(BOOK_WEATHER).write(PAGE_WEATHER, history)
-            true
+            Paper.book(BOOK_WEATHER).write(PAGE_WEATHER, history)?.apply {
+                emit(true)
+            }
+        }.catch {
+            println()
         }
 
 
@@ -48,8 +58,6 @@ class PaperWeatherRepo(private val apiFactory: ApiFactory) : BaseRepo(), Weather
         getFlow {
             val history = getHistory()
             history[city.toLowerCase(Locale.ROOT).trim()]
-        }.catch {
-            println()
         }
 
     override suspend fun downloadWeather(city: String) = flow {
@@ -57,7 +65,6 @@ class PaperWeatherRepo(private val apiFactory: ApiFactory) : BaseRepo(), Weather
             apiFactory.getWeatherApi().getWeather(city.toLowerCase(Locale.ROOT).trim(), KEY_WEATHER)
         emit(weather)
     }
-
 
     override suspend fun loadWeatherHistory(): Flow<HashMap<String, WeatherInfo>> =
         getFlow { getHistory() }

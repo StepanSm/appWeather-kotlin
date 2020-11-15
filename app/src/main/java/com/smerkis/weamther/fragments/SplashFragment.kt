@@ -40,8 +40,6 @@ class SplashFragment :
         viewModel.weatherInfoData.observe(viewLifecycleOwner) {
             navigator.navigateTo(Layout.MAIN)
         }
-
-        binding.viewModel?.loadCityName()
     }
 
 

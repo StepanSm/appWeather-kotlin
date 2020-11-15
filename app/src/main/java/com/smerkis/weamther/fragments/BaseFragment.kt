@@ -28,17 +28,14 @@ abstract class BaseFragment<VM : ViewModel, B : ViewDataBinding>(private val lay
 
     abstract fun initDi()
 
-    @SuppressLint("LongNotTimber")
     fun logD(msg: String) {
         Log.d(this.javaClass.simpleName + "TAG", msg)
     }
 
-    @SuppressLint("LongNotTimber")
     fun logE(msg: String) {
         Log.e(this.javaClass.simpleName + "TAG", msg)
     }
 
-    @SuppressLint("LongNotTimber")
     fun logI(msg: String) {
         Log.i(this.javaClass.simpleName + "TAG", msg)
     }
