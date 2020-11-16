@@ -1,6 +1,7 @@
 package com.smerkis.weamther.viewModels
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -9,10 +10,13 @@ import com.smerkis.weamther.repository.image.ImageRepo
 import com.smerkis.weamther.repository.weather.WeatherRepo
 import com.smerkis.weamther.worker.WeatherBus
 import com.squareup.otto.Subscribe
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.lang.Exception
+import java.util.function.BiFunction
 import javax.inject.Inject
 
 class SplashViewModel : AbstractViewModel() {
@@ -23,10 +27,8 @@ class SplashViewModel : AbstractViewModel() {
     @Inject
     lateinit var weatherRepo: WeatherRepo
 
-    val imageUrlData: MutableLiveData<String> by lazy { MutableLiveData<String>() }
-    val weatherInfoData: MutableLiveData<WeatherInfo> by lazy { MutableLiveData<WeatherInfo>() }
+    val preloadedData: MutableLiveData<Pair<WeatherInfo, Bitmap>> by lazy { MutableLiveData() }
     val errorData: MutableLiveData<Throwable> by lazy { MutableLiveData<Throwable>() }
-
 
     init {
         Log.d("WeatherWorker", "ViewModel register")
@@ -39,26 +41,27 @@ class SplashViewModel : AbstractViewModel() {
     fun onWeatherUpdated(weather: WeatherInfo) {
 
         viewModelScope.launch {
+            Log.d("SplashViewModel", "onWeatherUpdated start")
 
-            weatherRepo.saveCity(weather.name).flatMapConcat {
-                Log.d("SplashViewModel ", "loadCityName")
-
-                WeatherBus.instance.unregister(this@SplashViewModel)
-
-                weatherRepo.saveWeather(weather.name, weather).map {
-
-                    if (it) {
-                        weatherInfoData.value = weather
-                        Log.d("SplashViewModel", "weather saved")
-                    } else {
-                        errorData.value =  Exception("save weather error")
-                    }
+            val cacheWeather = weatherRepo.saveCity(weather.name).flatMapConcat {
+                withContext(Dispatchers.Main) {
+                    WeatherBus.instance.unregister(this@SplashViewModel)
                 }
-            }.catch {
-                errorData.value =  Exception("onWeatherUpdated error")
-                Log.d("SplashViewModel", "error")
+                weatherRepo.saveWeather(weather.name, weather)
+            }
 
-            }.collect ()
+            val image = imageRepo.downloadImage(weather.name)
+
+
+            val zipped = cacheWeather.zip(image) { _, bitmap ->
+                Pair(weather, bitmap)
+            }
+
+            zipped.catch {
+                errorData.postValue(it)
+            }.flowOn(Dispatchers.IO).collect {
+                preloadedData.postValue(it)
+            }
         }
     }
 

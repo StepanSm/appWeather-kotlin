@@ -1,55 +1,22 @@
 package com.smerkis.weamther.fragments
 
-import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.Context
-import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
-import androidx.navigation.NavArgs
-import androidx.navigation.fragment.navArgs
-import com.smerkis.weamther.R
+import androidx.viewbinding.ViewBinding
 import com.smerkis.weamther.activities.MainNavigator
 
-abstract class BaseFragment<VM : ViewModel, B : ViewDataBinding>(private val layoutId: Int) :
-    Fragment() {
+abstract class BaseFragment<VM : ViewModel, B : ViewBinding>(layoutId: Int) :
+    Fragment(layoutId) {
 
     protected lateinit var navigator: MainNavigator
-    protected lateinit var binding: B
+    protected abstract val binding: B
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         navigator = context as MainNavigator
+        initDi()
     }
 
     abstract fun initDi()
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        initDi()
-        binding = DataBindingUtil.inflate(inflater, layoutId, container, false)
-        return binding.root
-    }
-
-    fun showInfoDialog(title: String, message: String?, call: (() -> Unit)? = null) {
-        AlertDialog.Builder(navigator as Context)
-            .setTitle(title)
-            .setMessage(message ?: getString(R.string.dialog_missing_message))
-            .setCancelable(false)
-            .setPositiveButton("Ok") { _, _ ->
-                call?.invoke()
-            }
-            .create()
-            .show()
-    }
-
 }

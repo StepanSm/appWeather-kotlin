@@ -8,6 +8,7 @@ import com.smerkis.weamther.model.WeatherInfo
 import com.smerkis.weamther.repository.weather.WeatherRepo
 import com.smerkis.weamther.worker.WeatherBus
 import com.squareup.otto.Subscribe
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,6 +25,7 @@ class MainViewModel : AbstractViewModel() {
         WeatherBus.instance.register(this)
     }
 
+    @FlowPreview
     fun load() {
         viewModelScope.launch {
 

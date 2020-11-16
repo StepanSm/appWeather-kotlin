@@ -19,7 +19,7 @@ private const val PAGE_WEATHER = "page_weather"
 class PaperWeatherRepo(private val apiFactory: ApiFactory) : BaseRepo(), WeatherRepo {
 
     override suspend fun saveCity(city: String): Flow<Boolean> = flow {
-        Paper.book(BOOK_CITY).write(PAGE_CITY, city.toLowerCase(Locale.ROOT).trim())?.apply {
+        Paper.book(BOOK_CITY).write(PAGE_CITY, city.toLowerCase(Locale.ROOT).trim())?.let {
             emit(true)
         }
     }.catch {
@@ -27,8 +27,10 @@ class PaperWeatherRepo(private val apiFactory: ApiFactory) : BaseRepo(), Weather
     }
 
     override suspend fun loadCity(): Flow<String> =
-        getFlow {
-            Paper.book(BOOK_CITY).read(PAGE_CITY, "Kurgan")
+        flow {
+            Paper.book(BOOK_CITY).read(PAGE_CITY, "Kurgan")?.let {
+                emit(it)
+            }
         }
 
     override suspend fun loadLastWeather() = flow {
@@ -45,7 +47,7 @@ class PaperWeatherRepo(private val apiFactory: ApiFactory) : BaseRepo(), Weather
         flow {
             val history = getHistory()
             history[city.toLowerCase(Locale.ROOT).trim()] = weather
-            Paper.book(BOOK_WEATHER).write(PAGE_WEATHER, history)?.apply {
+            Paper.book(BOOK_WEATHER).write(PAGE_WEATHER, history)?.let {
                 emit(true)
             }
         }.catch {
@@ -54,9 +56,8 @@ class PaperWeatherRepo(private val apiFactory: ApiFactory) : BaseRepo(), Weather
 
 
     override suspend fun loadWeather(city: String): Flow<WeatherInfo?> =
-        getFlow {
-            val history = getHistory()
-            history[city.toLowerCase(Locale.ROOT).trim()]
+        flow {
+            emit(getHistory()[city.toLowerCase(Locale.ROOT).trim()])
         }
 
     override suspend fun downloadWeather(city: String) = flow {
@@ -66,7 +67,7 @@ class PaperWeatherRepo(private val apiFactory: ApiFactory) : BaseRepo(), Weather
     }
 
     override suspend fun loadWeatherHistory(): Flow<HashMap<String, WeatherInfo>> =
-        getFlow { getHistory() }
+        flow { getHistory() }
 
     private fun getHistory(): HashMap<String, WeatherInfo> =
         Paper.book(BOOK_WEATHER).read(
