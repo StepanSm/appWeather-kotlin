@@ -13,6 +13,7 @@ import com.smerkis.weamther.components.ICONS
 import com.smerkis.weamther.databinding.FragmentMainBinding
 import com.smerkis.weamther.viewModels.MainViewModel
 import kotlinx.coroutines.FlowPreview
+import okhttp3.internal.addHeaderLenient
 import javax.inject.Inject
 
 @FlowPreview
@@ -22,6 +23,7 @@ class MainFragment : BaseFragment<MainViewModel, FragmentMainBinding>(R.layout.f
     lateinit var viewModel: MainViewModel
     override val binding: FragmentMainBinding by viewBinding(FragmentMainBinding::bind)
     private val args by navArgs<MainFragmentArgs>()
+    private val forecastAdapter = ForecastsAdapter()
 
 
     override fun initDi() {
@@ -43,12 +45,26 @@ class MainFragment : BaseFragment<MainViewModel, FragmentMainBinding>(R.layout.f
 
         }
 
+        viewModel.forecast.observe(viewLifecycleOwner) {
+            forecastAdapter.submitList(it.list)
+        }
+
         binding.setVariable(BR.weather, args.weather)
 
         MyApp.instance.getViewModelSubComponent().inject(viewModel)
         binding.toolbarCityImage.setImageBitmap(args.image)
         ICONS[args.weather.weather[0].description]?.let { binding.iconWeather.load(it) }
+        initRecycler()
+    }
 
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.loadForecast()
+
+    }
+    private fun initRecycler() {
+        binding.recyclerView.adapter = forecastAdapter
 
     }
 }

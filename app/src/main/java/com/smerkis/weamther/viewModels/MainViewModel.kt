@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import coil.ImageLoader
 import com.smerkis.weamther.components.CELSIUM
+import com.smerkis.weamther.model.ApiForecast
 import com.smerkis.weamther.model.WeatherInfo
 import com.smerkis.weamther.repository.image.ImageRepo
 import com.smerkis.weamther.repository.weather.WeatherRepo
@@ -28,11 +29,24 @@ class MainViewModel : AbstractViewModel() {
 
     val isPhotoLoaded = ObservableField<Boolean>(false)
     val weatherInfo: MutableLiveData<String> by lazy { MutableLiveData<String>() }
+    val forecast: MutableLiveData<ApiForecast> by lazy { MutableLiveData<ApiForecast>() }
     val errorData: MutableLiveData<Throwable> by lazy { MutableLiveData<Throwable>() }
     val imageCityData: MutableLiveData<Bitmap> by lazy { MutableLiveData<Bitmap>() }
 
     init {
         WeatherBus.instance.register(this)
+    }
+
+    fun loadForecast() {
+        viewModelScope.launch {
+            weatherRepo.loadCity().flatMapConcat { city ->
+                weatherRepo.getForecast(city)
+            }.catch {
+                errorData.value = it
+            }.collect {
+                forecast.value = it
+            }
+        }
     }
 
     fun load() {

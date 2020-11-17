@@ -2,6 +2,7 @@ package com.smerkis.weamther.repository.weather
 
 import com.smerkis.weamther.api.ApiFactory
 import com.smerkis.weamther.components.KEY_WEATHER
+import com.smerkis.weamther.model.ApiForecast
 import com.smerkis.weamther.model.WeatherInfo
 import com.smerkis.weamther.repository.BaseRepo
 import io.paperdb.Paper
@@ -17,6 +18,12 @@ private const val PAGE_WEATHER = "page_weather"
 
 @FlowPreview
 class PaperWeatherRepo(private val apiFactory: ApiFactory) : BaseRepo(), WeatherRepo {
+
+    override suspend fun getForecast(city: String) = flow {
+        apiFactory.getWeatherApi().getWeatherForecast(city).let {
+            emit(it)
+        }
+    }
 
     override suspend fun saveCity(city: String): Flow<Boolean> = flow {
         Paper.book(BOOK_CITY).write(PAGE_CITY, city.toLowerCase(Locale.ROOT).trim())?.let {
