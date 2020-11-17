@@ -12,10 +12,11 @@ import com.smerkis.weamther.api.ApiFactory
 import com.smerkis.weamther.model.FlickrResponse
 import com.smerkis.weamther.repository.BaseRepo
 import io.paperdb.Paper
-import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import java.util.*
 
 private const val BOOK_IMAGES = "book_image"
@@ -32,10 +33,9 @@ class PaperImageRepo(val apiFactory: ApiFactory) : BaseRepo(), ImageRepo {
         if (photos.photos.photo.isNotEmpty()) {
             emit(getUrlFromPhotos(photos))
         }
-    }.catch {
-        println()
     }
 
+    @Throws(IOException::class)
     override suspend fun writeToCache(bitmap: Bitmap, city: String) =
         flow {
             var imageFile = File(
@@ -51,10 +51,10 @@ class PaperImageRepo(val apiFactory: ApiFactory) : BaseRepo(), ImageRepo {
                 )
             }
 
-            FileOutputStream(imageFile).use {
+            imageFile.outputStream().use {
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 85, it)
-                it.flush()
             }
+
 
             val result = Paper.book(BOOK_IMAGES)
                 .write(city.toLowerCase(Locale.getDefault()).trim(), imageFile)
@@ -66,20 +66,17 @@ class PaperImageRepo(val apiFactory: ApiFactory) : BaseRepo(), ImageRepo {
 
     override suspend fun getImageFileFromCache(city: String) =
         flow {
-            val image =
-                Paper.book(BOOK_IMAGES).read<File?>(city.toLowerCase(Locale.getDefault()).trim())
-            emit(image)
-        }.filterNotNull()
+            Paper.book(BOOK_IMAGES).read<File?>(city.toLowerCase(Locale.getDefault()).trim())?.let {
+                emit(it)
+            }
+        }
 
-    override suspend fun downloadImage(city: String): Flow<Bitmap> {
-        Log.d("SplashViewModel", "onWeatherUpdated downloadImage")
-        return getRandomPhotoUrl(city).flatMapConcat { url ->
-            Log.d("SplashViewModel", "onWeatherUpdated map")
+    override suspend fun downloadImage(city: String) =
+        getRandomPhotoUrl(city).flatMapConcat { url ->
             flow {
                 emit(getBitmap(url))
             }
         }
-    }
 
     private suspend fun getBitmap(url: String): Bitmap {
         val imageLoader = ImageLoader(MyApp.instance)

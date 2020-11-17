@@ -22,8 +22,6 @@ class PaperWeatherRepo(private val apiFactory: ApiFactory) : BaseRepo(), Weather
         Paper.book(BOOK_CITY).write(PAGE_CITY, city.toLowerCase(Locale.ROOT).trim())?.let {
             emit(true)
         }
-    }.catch {
-        println()
     }
 
     override suspend fun loadCity(): Flow<String> =
@@ -35,12 +33,10 @@ class PaperWeatherRepo(private val apiFactory: ApiFactory) : BaseRepo(), Weather
 
     override suspend fun loadLastWeather() = flow {
         loadCity().flatMapConcat { city ->
-            loadWeather(city).map {
+            loadWeather(city).mapNotNull {
                 emit(it)
             }
         }
-    }.catch {
-        println()
     }
 
     override suspend fun saveWeather(city: String, weather: WeatherInfo): Flow<Boolean> =
@@ -50,20 +46,20 @@ class PaperWeatherRepo(private val apiFactory: ApiFactory) : BaseRepo(), Weather
             Paper.book(BOOK_WEATHER).write(PAGE_WEATHER, history)?.let {
                 emit(true)
             }
-        }.catch {
-            println()
         }
-
 
     override suspend fun loadWeather(city: String): Flow<WeatherInfo?> =
         flow {
-            emit(getHistory()[city.toLowerCase(Locale.ROOT).trim()])
+            getHistory()[city.toLowerCase(Locale.ROOT).trim()]?.let {
+                emit(it)
+            }
         }
 
     override suspend fun downloadWeather(city: String) = flow {
-        val weather =
-            apiFactory.getWeatherApi().getWeather(city.toLowerCase(Locale.ROOT).trim(), KEY_WEATHER)
-        emit(weather)
+        apiFactory.getWeatherApi().getWeather(city.toLowerCase(Locale.ROOT).trim(), KEY_WEATHER)
+            .let {
+                emit(it)
+            }
     }
 
     override suspend fun loadWeatherHistory(): Flow<HashMap<String, WeatherInfo>> =

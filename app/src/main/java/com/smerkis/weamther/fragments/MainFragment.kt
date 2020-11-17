@@ -6,15 +6,20 @@ import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.navArgs
 import by.kirich1409.viewbindingdelegate.viewBinding
 import coil.load
+import com.smerkis.weamther.BR
 import com.smerkis.weamther.MyApp
 import com.smerkis.weamther.R
 import com.smerkis.weamther.components.ICONS
 import com.smerkis.weamther.databinding.FragmentMainBinding
 import com.smerkis.weamther.viewModels.MainViewModel
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
+@FlowPreview
 class MainFragment : BaseFragment<MainViewModel, FragmentMainBinding>(R.layout.fragment_main) {
 
+    @Inject
+    lateinit var viewModel: MainViewModel
     override val binding: FragmentMainBinding by viewBinding(FragmentMainBinding::bind)
     private val args by navArgs<MainFragmentArgs>()
 
@@ -27,15 +32,23 @@ class MainFragment : BaseFragment<MainViewModel, FragmentMainBinding>(R.layout.f
             .inject(this)
     }
 
-    @Inject
-    lateinit var viewModel: MainViewModel
 
+    @FlowPreview
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.setVariable(BR.viewModel, viewModel)
+        viewModel.imageCityData.observe(viewLifecycleOwner) {
+            binding.toolbarCityImage.setImageBitmap(it)
+            binding.progressBar.visibility = View.GONE
+
+        }
+
+        binding.setVariable(BR.weather, args.weather)
 
         MyApp.instance.getViewModelSubComponent().inject(viewModel)
         binding.toolbarCityImage.setImageBitmap(args.image)
-        binding.title.text = "${args.weather.name}\n${args.weather.main.temp}"
-        ICONS[args.weather.weather[0].description]?.let { binding.toolbarImage.load(it) }
+        ICONS[args.weather.weather[0].description]?.let { binding.iconWeather.load(it) }
+
+
     }
 }

@@ -24,12 +24,15 @@ data class WeatherInfo(
 data class Wind(
     val deg: Int,
     val speed: Double
-) : Parcelable
+) : Parcelable {
+    fun getSpeed() = speed.toString()
+}
 
 @Parcelize
 data class Clouds(
     val all: Int
 ) : Parcelable
+
 @Parcelize
 data class Coord(
     val lat: Double,
@@ -53,7 +56,16 @@ data class Main(
     val temp: Double,
     val temp_max: Double,
     val temp_min: Double
-) : Parcelable
+) : Parcelable {
+
+    fun getTemp() =
+        "$temp \u2103"
+
+    fun getHumidity(): String {
+        return humidity.toString()
+    }
+
+}
 
 @Parcelize
 data class Weather(

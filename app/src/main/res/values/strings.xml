@@ -6,4 +6,8 @@
     <string name="max_temp">Max temp</string>
     <string name="date">Date</string>
     <string name="time">Time</string>
+    <string name="info_pressure">Pressure: </string>
+    <string name="wind_info">Wind: </string>
+    <string name="humidity_info">Humidity: </string>
+    <string name="fab_search_city">search_city</string>
 </resources>

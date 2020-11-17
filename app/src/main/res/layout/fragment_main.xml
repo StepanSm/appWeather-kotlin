@@ -1,131 +1,241 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/motionLayout"
-    app:layoutDescription="@xml/collapsing_toolbar_main_fragment"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.smerkis.weamther.FunsKt" />
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="com.smerkis.weamther.viewModels.MainViewModel" />
+
+        <variable
+            name="weather"
+            type="com.smerkis.weamther.model.WeatherInfo" />
+    </data>
+
+    <androidx.constraintlayout.motion.widget.MotionLayout
+        android:id="@+id/motionLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/gray"
+        app:layoutDescription="@xml/fragment_main_xml_motionlayout_scene">
 
 
-    <ImageView
-        android:id="@+id/toolbar_city_image"
-        android:layout_width="0dp"
-        android:layout_height="220dp"
-        android:adjustViewBounds="true"
-        android:contentDescription="@null"
-        android:fitsSystemWindows="true"
-        android:scaleType="centerCrop"
-        android:src="@drawable/city_exmple"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <FrameLayout
-        android:id="@+id/toolbar_icon"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:background="#ffffff"
-        app:layout_constraintBottom_toBottomOf="@id/toolbar_city_image"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_city_image">
-
-        <ImageView
-            android:id="@+id/toolbar_image"
-            android:layout_width="73dp"
-            android:layout_height="73dp"
-            android:layout_gravity="center"
-            android:adjustViewBounds="true"
-            tools:src ="@drawable/broken_clouds"
-            android:contentDescription="@null"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_fore_cast"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/white"
+            android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </FrameLayout>
+            app:layout_constraintTop_toTopOf="parent">
 
-    <ImageView
-        android:id="@+id/backButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="26dp"
-        android:contentDescription="@null"
-        android:paddingStart="16dp"
-        android:paddingTop="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                tools:text="forecast" />
+        </androidx.appcompat.widget.Toolbar>
 
-    <ImageView
-        android:id="@+id/backButton2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="26dp"
-        android:alpha="0"
-        android:contentDescription="@null"
-        android:paddingStart="16dp"
-        android:paddingTop="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@id/separator"
-        app:tint="@color/black" />
+        <FrameLayout
+            android:id="@+id/photo_city_container"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
+            <ImageView
+                android:id="@+id/toolbar_city_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:contentDescription="@null"
+                android:fitsSystemWindows="true"
+                android:onClick="@{()->viewModel.downloadPhoto()}"
+                android:scaleType="centerCrop"
+                android:src="@drawable/city_example"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/toolbarTitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="26dp"
-        android:layout_marginBottom="10dp"
-        android:alpha="0"
-        android:gravity="center"
-        android:text="@string/app_name"
-        android:textColor="@color/black"
-        android:textSize="19sp"
-        android:visibility="visible"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/separator"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+            <TextView
+                android:id="@+id/city_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|start"
+                android:layout_marginStart="@dimen/margin_16"
+                android:layout_marginLeft="@dimen/margin_16"
+                android:layout_marginBottom="@dimen/margin_16"
+                android:text="@{weather.name}"
+                android:textColor="@color/black"
+                android:textSize="28sp"
+                android:textStyle="normal"
+                tools:text="Moscow" />
 
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginBottom="24dp"
-        android:gravity="center"
-        tools:text="city: Kurgan\ntemp:-15.02C\novercsat clouds"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_city_image" />
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="@{safeUnbox(viewModel.isPhotoLoaded() ? View.INVISIBLE : View.VISIBLE)}" />
 
-    <View
-        android:id="@+id/separator"
-        android:layout_width="0dp"
-        android:layout_height="20dp"
-        android:background="@drawable/shadow"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:clipToPadding="true"
-        android:paddingBottom="50dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/separator" />
+        </FrameLayout>
 
 
-</androidx.constraintlayout.motion.widget.MotionLayout>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginEnd="@dimen/margin_16"
+            android:layout_marginRight="@dimen/margin_16"
+            android:contentDescription="@string/fab_search_city"
+            android:elevation="4dp"
+            android:src="@drawable/ic_baseline_search_24"
+            app:layout_constraintBottom_toBottomOf="@+id/photo_city_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/photo_city_container"
+            tools:targetApi="lollipop" />
+
+
+        <TextView
+            android:id="@+id/temp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_16"
+            android:layout_marginEnd="@dimen/margin_16"
+            android:layout_marginRight="@dimen/margin_16"
+            android:text="@{weather.main.getTemp()}"
+            android:textColor="@color/black"
+            android:textSize="70sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/fab"
+            app:layout_constraintTop_toBottomOf="@+id/fab"
+            tools:text="-26" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/icon_weather"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            app:layout_constraintBottom_toBottomOf="@+id/temp"
+            app:layout_constraintEnd_toStartOf="@+id/temp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/temp"
+            tools:src="@drawable/snow" />
+
+        <TextView
+            android:id="@+id/range"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_16"
+            android:gravity="center"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/temp"
+            tools:text="-26 -30" />
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardElevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/range">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/weather_info_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/margin_16">
+
+                <TextView
+                    android:id="@+id/pressure_title"
+                    style="@style/weather_data_title"
+                    android:text="@string/info_pressure"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/pressure_data"
+                    style="@style/weather_data"
+                    app:layout_constraintBottom_toBottomOf="@+id/pressure_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/pressure_title"
+                    tools:text="1021mm Hg" />
+
+                <TextView
+                    android:id="@+id/wind_data"
+                    style="@style/weather_data"
+                    android:text="@{weather.wind.getSpeed()}"
+                    app:layout_constraintBottom_toBottomOf="@+id/wind_title"
+                    app:layout_constraintStart_toStartOf="@+id/pressure_data"
+                    app:layout_constraintTop_toTopOf="@+id/wind_title"
+                    tools:text="4m/s" />
+
+                <TextView
+                    android:id="@+id/wind_title"
+                    style="@style/weather_data_title"
+                    android:text="@string/wind_info"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/pressure_title" />
+
+                <TextView
+                    android:id="@+id/humidity_data"
+                    style="@style/weather_data"
+                    android:text="@{weather.main.getHumidity()}"
+                    app:layout_constraintBottom_toBottomOf="@+id/humidity_title"
+                    app:layout_constraintStart_toStartOf="@+id/wind_data"
+                    app:layout_constraintTop_toTopOf="@+id/humidity_title"
+                    tools:text="26%" />
+
+
+                <TextView
+                    android:id="@+id/humidity_title"
+                    style="@style/weather_data_title"
+                    android:text="@string/humidity_info"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/wind_title" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5555555555"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardView" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:clipToPadding="true"
+            android:paddingBottom="50dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView3"
+            app:layout_constraintVertical_bias="1.0" />
+
+    </androidx.constraintlayout.motion.widget.MotionLayout>
+</layout>
+

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        motion:constraintSetEnd="@+id/end"
+        motion:constraintSetStart="@id/start"
+        motion:duration="1000">
+       <KeyFrameSet>
+       </KeyFrameSet>
+        <OnSwipe motion:touchAnchorId="@+id/recyclerView" />
+    </Transition>
+
+    <ConstraintSet android:id="@+id/start">
+        <Constraint
+            android:id="@+id/toolbar_fore_cast"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:visibility="invisible"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:rotationX="-90" />
+        <Constraint
+            android:id="@+id/recyclerView"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="visible"
+            motion:layout_constraintVertical_bias="1.0"
+            motion:layout_constraintTop_toBottomOf="@+id/textView3"
+            motion:layout_constraintHorizontal_bias="0.0"
+            motion:layout_constraintStart_toStartOf="parent" />
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/end">
+        <Constraint
+            android:id="@+id/toolbar_fore_cast"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:visibility="visible"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:rotationX="360" />
+        <Constraint
+            android:id="@+id/photo_city_container"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:translationY="-250dp"
+            android:visibility="invisible"
+            android:rotationX="94" />
+        <Constraint
+            android:id="@+id/fab"
+            android:elevation="4dp"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            motion:layout_constraintBottom_toBottomOf="@+id/photo_city_container"
+            android:layout_marginEnd="@dimen/margin_16"
+            motion:layout_constraintTop_toBottomOf="@+id/photo_city_container"
+            android:layout_marginRight="@dimen/margin_16"
+            android:translationY="-250dp"
+            android:visibility="invisible" />
+        <Constraint
+            android:id="@+id/temp"
+            motion:layout_constraintEnd_toStartOf="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin_16"
+            motion:layout_constraintTop_toBottomOf="@+id/fab"
+            android:layout_marginRight="@dimen/margin_16"
+            android:layout_marginTop="@dimen/margin_16"
+            android:translationY="-290dp"
+            android:visibility="invisible"
+            android:rotationY="90" />
+        <Constraint
+            android:id="@+id/icon_weather"
+            motion:layout_constraintEnd_toStartOf="@+id/temp"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            motion:layout_constraintBottom_toBottomOf="@+id/temp"
+            motion:layout_constraintTop_toTopOf="@+id/temp"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:translationY="-290dp"
+            android:visibility="invisible"
+            android:rotationY="-90" />
+        <Constraint
+            android:id="@+id/range"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toBottomOf="@+id/temp"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="@dimen/margin_16"
+            android:translationY="-400dp"
+            android:visibility="invisible" />
+        <Constraint
+            android:id="@+id/cardView"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toBottomOf="@+id/range"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:translationY="-560dp"
+            android:visibility="invisible" />
+        <Constraint
+            android:id="@+id/textView3"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toBottomOf="@+id/cardView"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:visibility="invisible" />
+        <Constraint
+            android:id="@+id/recyclerView"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="visible"
+            motion:layout_constraintVertical_bias="1.0"
+            motion:layout_constraintTop_toBottomOf="@+id/toolbar_fore_cast"
+            motion:layout_constraintHorizontal_bias="0.0"
+            motion:layout_constraintStart_toStartOf="parent" />
+    </ConstraintSet>
+</MotionScene>

@@ -4,7 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import androidx.fragment.app.Fragment
 
-fun Fragment. showInfoDialog(title: String, message: String?, call: (() -> Unit)? = null) {
+fun Fragment.showInfoDialog(title: String, message: String?, call: (() -> Unit)? = null) {
     AlertDialog.Builder(this.activity as Context)
         .setTitle(title)
         .setMessage(message ?: getString(R.string.dialog_missing_message))
@@ -14,4 +14,8 @@ fun Fragment. showInfoDialog(title: String, message: String?, call: (() -> Unit)
         }
         .create()
         .show()
+}
+
+fun Double.toString() {
+    this.toString()
 }
