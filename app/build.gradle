@@ -61,27 +61,15 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation 'androidx.fragment:fragment-ktx:1.3.0-beta01'
 
-    //DI Dagger
-    def daggerVer = 2.27
-    implementation 'com.google.dagger:dagger:2.29.1'
-    implementation "com.google.dagger:dagger-android-support:$daggerVer"
-    kapt "com.google.dagger:dagger-android-processor:$daggerVer"
-    kapt "com.google.dagger:dagger-compiler:$daggerVer"
-
     //TEST
     testImplementation 'org.mockito:mockito-core:3.2.4'
     androidTestImplementation 'com.squareup.okhttp3:mockwebserver:4.4.0'
-    androidTestAnnotationProcessor "com.google.dagger:dagger-compiler:$daggerVer"
-    testAnnotationProcessor "com.google.dagger:dagger-compiler:$daggerVer"
-    kaptAndroidTest "com.google.dagger:dagger-compiler:$daggerVer"
-    kaptTest "com.google.dagger:dagger-compiler:$daggerVer"
 
     def retrofitVer = "2.9.0"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVer"
     implementation "com.squareup.retrofit2:retrofit:$retrofitVer"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVer"
     implementation 'com.squareup.okhttp3:logging-interceptor:4.4.1'
- //   implementation "com.squareup.retrofit2:converter-moshi:$retrofitVer"
 
     implementation 'io.paperdb:paperdb:2.1'
 
@@ -96,6 +84,12 @@ dependencies {
 
     //coil
     implementation("io.coil-kt:coil:1.0.0")
+
+    //Koin DI
+    def koin_version = '2.2.1'
+    implementation "org.koin:koin-androidx-scope:$koin_version"
+    implementation "org.koin:koin-androidx-viewmodel:$koin_version"
+    testImplementation "org.koin:koin-test:$koin_version"
 
     implementation 'com.kirich1409.viewbindingpropertydelegate:vbpd-noreflection:1.3.0'
 //    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"

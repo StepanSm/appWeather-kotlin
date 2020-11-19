@@ -1,7 +1,12 @@
 package com.smerkis.weamther.fragments
 
+import android.os.Build
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.navArgs
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -11,27 +16,26 @@ import com.smerkis.weamther.MyApp
 import com.smerkis.weamther.R
 import com.smerkis.weamther.activities.MainActivity
 import com.smerkis.weamther.databinding.FragmentMainBinding
+import com.smerkis.weamther.model.Main
 import com.smerkis.weamther.viewModels.MainViewModel
+import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.coroutines.FlowPreview
-import javax.inject.Inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.component.KoinApiExtension
 
+@KoinApiExtension
 @FlowPreview
 class MainFragment : BaseFragment(R.layout.fragment_main) {
 
-    @Inject
-    lateinit var viewModel: MainViewModel
+    private val viewModel: MainViewModel by viewModel()
     private val binding: FragmentMainBinding by viewBinding(FragmentMainBinding::bind)
     private val args by navArgs<MainFragmentArgs>()
     private val forecastAdapter = ForecastsAdapter()
 
-    override fun initDi() {
-        MyApp.instance.getAppComponent()
-            .activitySubComponentBuilder()
-            .with(activity as FragmentActivity)
-            .build()
-            .inject(this)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
-
 
     @FlowPreview
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -47,7 +51,6 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
 
         binding.setVariable(BR.weather, args.weather)
 
-        MyApp.instance.getViewModelSubComponent().inject(viewModel)
         binding.toolbarCityImage.setImageBitmap(args.image)
         binding.iconWeather.load("http://openweathermap.org/img/wn/${args.weather.weather[0].icon}@2x.png")
         binding.iconWeather.setOnClickListener {
@@ -55,6 +58,16 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
         }
 
         initRecycler()
+    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.maim_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return super.onOptionsItemSelected(item)
     }
 
 

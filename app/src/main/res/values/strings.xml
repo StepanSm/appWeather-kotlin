@@ -13,4 +13,6 @@
     <string name="humidity_info">Humidity: </string>
     <string name="forecast_for">5 day Forecast for %s</string>
     <string name="fab_search_city">search_city</string>
+    <string name="main_menu_history_title">History</string>
+    <string name="main_menu_refresh_title">Refresh</string>
 </resources>

@@ -48,6 +48,7 @@ class PaperImageRepo(val apiFactory: ApiFactory) : BaseRepo(), ImageRepo {
                 imageFile = File(
                     MyApp.instance.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
                     "${city.toLowerCase(Locale.getDefault()).trim().toUUID()}.jpg"
+
                 )
             }
 

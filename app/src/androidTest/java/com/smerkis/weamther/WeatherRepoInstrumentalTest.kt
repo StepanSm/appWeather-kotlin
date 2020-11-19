@@ -2,13 +2,9 @@ package com.smerkis.weamther
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.smerkis.weamther.api.ApiFactory
-import com.smerkis.weamther.components.KEY_WEATHER
-import com.smerkis.weamther.di.AppModule
-import com.smerkis.weamther.di.DaggerTestComponent
-import com.smerkis.weamther.di.TestComponent
-import com.smerkis.weamther.di.modules.ApiFactoryModule
 import com.smerkis.weamther.model.WeatherInfo
 import com.smerkis.weamther.repository.weather.WeatherRepo
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.runBlocking
@@ -22,6 +18,7 @@ const val TEST_CITY = "Kurgan"
 const val TEST_ID = 78
 const val TEST_TEMPERATURE = 59.0
 
+@FlowPreview
 @RunWith(AndroidJUnit4::class)
 class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
     @Inject
@@ -36,15 +33,6 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
 
     override fun setup() {
         super.setup()
-        val apiFactoryModule: ApiFactoryModule = object : ApiFactoryModule() {
-            override fun weatherUrl() = webServer.url("/").toString()
-        }
-
-        val testComponent: TestComponent =
-            DaggerTestComponent.builder().appModule(AppModule(MyApp.instance))
-                .apiFactoryModule(apiFactoryModule)
-                .build()
-        testComponent.inject(this)
     }
 
     @Test
@@ -56,7 +44,7 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
     fun weather_api_test() {
         mockResponse()
         runBlocking {
-            val result = apiFactory.getWeatherApi().getWeather(TEST_CITY, KEY_WEATHER)
+            val result = apiFactory.getWeatherApi().getWeather(TEST_CITY)
             assertEquals(result.name, TEST_CITY)
             assertEquals(result.weather[0].id, TEST_ID)
         }
@@ -102,7 +90,7 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
     fun save_weather_Ok() {
         mockResponse()
         runBlocking {
-            testWeather = apiFactory.getWeatherApi().getWeather(TEST_CITY, KEY_WEATHER)
+            testWeather = apiFactory.getWeatherApi().getWeather(TEST_CITY)
             weatherRepo.saveWeather(TEST_CITY, testWeather).take(1)
                 .collect {
                     assertEquals(it, true)
@@ -114,7 +102,7 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
     fun load_weather_ok() {
         mockResponse()
         runBlocking {
-            testWeather = apiFactory.getWeatherApi().getWeather(TEST_CITY, KEY_WEATHER)
+            testWeather = apiFactory.getWeatherApi().getWeather(TEST_CITY)
             weatherRepo.loadWeather(TEST_CITY).take(1).collect {loadedWeather->
 
 

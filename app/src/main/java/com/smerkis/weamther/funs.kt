@@ -1,6 +1,8 @@
 package com.smerkis.weamther
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -33,6 +35,8 @@ fun Any.logI(msg: String, tag: String = this::class.simpleName.toString()) {
 
 fun Any.logE(msg: String, tag: String = this::class.simpleName.toString()) {
     Log.e(tag, msg)
-
 }
 
+fun showLongToast(msg: String) {
+    Toast.makeText(MyApp.instance as Context, msg, Toast.LENGTH_LONG).show()
+}

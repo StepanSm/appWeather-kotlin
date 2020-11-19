@@ -2,10 +2,6 @@ package com.smerkis.weamther
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import com.smerkis.weamther.di.AppModule
-import com.smerkis.weamther.di.DaggerTestComponent
-import com.smerkis.weamther.di.TestComponent
-import com.smerkis.weamther.di.modules.ApiFactoryModule
 import com.smerkis.weamther.repository.image.ImageRepo
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
@@ -25,15 +21,6 @@ class ImageRepoInstrumentalTest : BaseInstrumentalTest() {
 
     override fun setup() {
         super.setup()
-        val apiFactoryModule: ApiFactoryModule = object : ApiFactoryModule() {
-            override fun imageUrl() = webServer.url("/").toString()
-        }
-
-        val testComponent: TestComponent =
-            DaggerTestComponent.builder().appModule(AppModule(MyApp.instance))
-                .apiFactoryModule(apiFactoryModule)
-                .build()
-        testComponent.inject(this)
     }
 
     @Test

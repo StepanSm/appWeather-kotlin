@@ -8,18 +8,15 @@ import com.smerkis.weamther.MyApp
 import com.smerkis.weamther.repository.weather.WeatherRepo
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import javax.inject.Inject
+import org.koin.core.component.KoinApiExtension
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
+@KoinApiExtension
 class WeatherWorker(context: Context, workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
+    CoroutineWorker(context, workerParams), KoinComponent {
 
-    @Inject
-    lateinit var repo: WeatherRepo
-
-    init {
-        MyApp.instance.getWorkerComponent().inject(this)
-    }
-
+    private val repo: WeatherRepo by inject ()
 
     @FlowPreview
     override suspend fun doWork(): Result {

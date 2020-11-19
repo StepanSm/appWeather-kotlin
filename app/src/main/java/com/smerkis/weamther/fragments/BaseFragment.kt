@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.viewbinding.ViewBinding
 import com.smerkis.weamther.R
 
 abstract class BaseFragment(layoutId: Int) :
@@ -13,12 +12,7 @@ abstract class BaseFragment(layoutId: Int) :
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        initDi()
     }
-
-
-    abstract fun initDi()
-
 
     fun showInfoDialog(title: String, message: String?, call: (() -> Unit)? = null) {
         AlertDialog.Builder(activity as Context)

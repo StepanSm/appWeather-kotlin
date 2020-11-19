@@ -2,33 +2,22 @@ package com.smerkis.weamther.fragments
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.smerkis.weamther.*
+import com.smerkis.weamther.MyErrorHandler
+import com.smerkis.weamther.R
 import com.smerkis.weamther.databinding.FragmentSplashBinding
 import com.smerkis.weamther.viewModels.SplashViewModel
 import isdigital.errorhandler.ErrorHandler
 import kotlinx.coroutines.FlowPreview
-import java.lang.Exception
-import javax.inject.Inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @FlowPreview
 class SplashFragment : BaseFragment(R.layout.fragment_splash) {
 
-    @Inject
-    lateinit var viewModel: SplashViewModel
+    private val viewModel: SplashViewModel by viewModel()
     private val binding: FragmentSplashBinding by viewBinding(FragmentSplashBinding::bind)
 
-    override fun initDi() {
-        MyApp.instance.getAppComponent()
-            .activitySubComponentBuilder()
-            .with(activity as FragmentActivity)
-            .build()
-            .inject(this)
-
-        MyApp.instance.getViewModelSubComponent().inject(viewModel)
-    }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

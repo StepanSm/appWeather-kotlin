@@ -1,6 +1,5 @@
 package com.smerkis.weamther.viewModels
 
-import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -10,24 +9,20 @@ import com.smerkis.weamther.repository.image.ImageRepo
 import com.smerkis.weamther.repository.weather.WeatherRepo
 import com.smerkis.weamther.worker.WeatherBus
 import com.squareup.otto.Subscribe
-import isdigital.errorhandler.ErrorHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import retrofit2.HttpException
-import java.lang.Exception
-import java.util.function.BiFunction
-import javax.inject.Inject
+import org.koin.core.component.KoinApiExtension
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class SplashViewModel : AbstractViewModel() {
+@KoinApiExtension
+class SplashViewModel : AbstractViewModel(), KoinComponent {
 
-    @Inject
-    lateinit var imageRepo: ImageRepo
-
-    @Inject
-    lateinit var weatherRepo: WeatherRepo
+    private val weatherRepo: WeatherRepo by inject()
+    private val imageRepo: ImageRepo by inject()
 
     val preloadedData: MutableLiveData<Pair<WeatherInfo, Bitmap>> by lazy { MutableLiveData() }
     val errorData: MutableLiveData<Throwable> by lazy { MutableLiveData<Throwable>() }
@@ -39,7 +34,6 @@ class SplashViewModel : AbstractViewModel() {
 
     @FlowPreview
     @Subscribe
-    @SuppressLint("CheckResult")
     fun onWeatherUpdated(weather: WeatherInfo) {
 
         viewModelScope.launch {

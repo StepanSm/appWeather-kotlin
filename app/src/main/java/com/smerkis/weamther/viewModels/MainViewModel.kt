@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import coil.ImageLoader
 import com.smerkis.weamther.components.CELSIUM
 import com.smerkis.weamther.model.ApiForecast
 import com.smerkis.weamther.model.WeatherInfo
@@ -14,18 +13,21 @@ import com.smerkis.weamther.repository.weather.WeatherRepo
 import com.smerkis.weamther.worker.WeatherBus
 import com.squareup.otto.Subscribe
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import org.koin.core.component.KoinApiExtension
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
+@KoinApiExtension
 @FlowPreview
-class MainViewModel : AbstractViewModel() {
+class MainViewModel : AbstractViewModel(), KoinComponent {
 
-    @Inject
-    lateinit var weatherRepo: WeatherRepo
-
-    @Inject
-    lateinit var imageRepo: ImageRepo
+    private val weatherRepo: WeatherRepo by inject()
+    private val imageRepo: ImageRepo by inject()
 
     val isPhotoLoaded = ObservableField(true)
     val weatherInfo: MutableLiveData<String> by lazy { MutableLiveData<String>() }
