@@ -81,9 +81,11 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$retrofitVer"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVer"
     implementation 'com.squareup.okhttp3:logging-interceptor:4.4.1'
+ //   implementation "com.squareup.retrofit2:converter-moshi:$retrofitVer"
 
     implementation 'io.paperdb:paperdb:2.1'
 
+    implementation 'isdigital.errorhandler:kotlin-error-handler:1.0.1'
     //Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
 

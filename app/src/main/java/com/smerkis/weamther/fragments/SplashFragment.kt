@@ -4,46 +4,42 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.smerkis.weamther.MyApp
-import com.smerkis.weamther.R
-import com.smerkis.weamther.activities.Layout
-import com.smerkis.weamther.databinding.FragmentMainBinding
+import com.smerkis.weamther.*
 import com.smerkis.weamther.databinding.FragmentSplashBinding
-import com.smerkis.weamther.showInfoDialog
 import com.smerkis.weamther.viewModels.SplashViewModel
+import isdigital.errorhandler.ErrorHandler
+import kotlinx.coroutines.FlowPreview
+import java.lang.Exception
 import javax.inject.Inject
 
+@FlowPreview
+class SplashFragment : BaseFragment(R.layout.fragment_splash) {
 
-class SplashFragment :
-    BaseFragment<SplashViewModel, FragmentSplashBinding>(R.layout.fragment_splash) {
-
-    override val binding: FragmentSplashBinding by viewBinding(FragmentSplashBinding::bind)
+    @Inject
+    lateinit var viewModel: SplashViewModel
+    private val binding: FragmentSplashBinding by viewBinding(FragmentSplashBinding::bind)
 
     override fun initDi() {
         MyApp.instance.getAppComponent()
             .activitySubComponentBuilder()
-            .with(navigator as FragmentActivity)
+            .with(activity as FragmentActivity)
             .build()
             .inject(this)
 
         MyApp.instance.getViewModelSubComponent().inject(viewModel)
     }
 
-    @Inject
-    lateinit var viewModel: SplashViewModel
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.errorData.observe(viewLifecycleOwner) { exception ->
-            showInfoDialog("ERROR", exception.message)
-            navigator.closeApp()
+            errorHandler(exception)
         }
 
         viewModel.preloadedData.observe(viewLifecycleOwner) {
-            navigator.navigateTo(
+            findNavController().navigate(
                 SplashFragmentDirections.actionSplashFragmentToMainFragment(
                     it.first,
                     it.second
@@ -52,6 +48,13 @@ class SplashFragment :
         }
     }
 
+    private fun errorHandler(e: Throwable) {
+        MyErrorHandler.errorHandler
+            .on(MyErrorHandler.OFFLINE_CODE) { throwable: Throwable, errorHandler: ErrorHandler ->
+                showLongToast(getString(R.string.network_connect))
+                binding.progressCircular.visibility = View.INVISIBLE
+            }.handle(e)
+    }
 
 
 }

@@ -8,6 +8,9 @@
     <string name="time">Time</string>
     <string name="info_pressure">Pressure: </string>
     <string name="wind_info">Wind: </string>
+    <string name="network_connect">Please check your internet connectivity and try again!</string>
+
     <string name="humidity_info">Humidity: </string>
+    <string name="forecast_for">5 day Forecast for %s</string>
     <string name="fab_search_city">search_city</string>
 </resources>

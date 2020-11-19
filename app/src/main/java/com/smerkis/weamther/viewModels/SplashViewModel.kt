@@ -10,11 +10,13 @@ import com.smerkis.weamther.repository.image.ImageRepo
 import com.smerkis.weamther.repository.weather.WeatherRepo
 import com.smerkis.weamther.worker.WeatherBus
 import com.squareup.otto.Subscribe
+import isdigital.errorhandler.ErrorHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.HttpException
 import java.lang.Exception
 import java.util.function.BiFunction
 import javax.inject.Inject
@@ -51,7 +53,6 @@ class SplashViewModel : AbstractViewModel() {
             }
 
             val image = imageRepo.downloadImage(weather.name)
-
 
             val zipped = cacheWeather.zip(image) { _, bitmap ->
                 Pair(weather, bitmap)

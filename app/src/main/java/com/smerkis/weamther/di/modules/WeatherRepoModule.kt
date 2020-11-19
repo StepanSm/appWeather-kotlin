@@ -5,6 +5,7 @@ import com.smerkis.weamther.repository.weather.PaperWeatherRepo
 import com.smerkis.weamther.repository.weather.WeatherRepo
 import dagger.Module
 import dagger.Provides
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -15,6 +16,7 @@ class WeatherRepoModule {
     @Provides
     fun getWeatherRepo(@Named("paper") repo: WeatherRepo): WeatherRepo = repo
 
+    @FlowPreview
     @Singleton
     @Named("paper")
     @Provides

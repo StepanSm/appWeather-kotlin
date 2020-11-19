@@ -9,27 +9,25 @@ import coil.load
 import com.smerkis.weamther.BR
 import com.smerkis.weamther.MyApp
 import com.smerkis.weamther.R
-import com.smerkis.weamther.components.ICONS
+import com.smerkis.weamther.activities.MainActivity
 import com.smerkis.weamther.databinding.FragmentMainBinding
 import com.smerkis.weamther.viewModels.MainViewModel
 import kotlinx.coroutines.FlowPreview
-import okhttp3.internal.addHeaderLenient
 import javax.inject.Inject
 
 @FlowPreview
-class MainFragment : BaseFragment<MainViewModel, FragmentMainBinding>(R.layout.fragment_main) {
+class MainFragment : BaseFragment(R.layout.fragment_main) {
 
     @Inject
     lateinit var viewModel: MainViewModel
-    override val binding: FragmentMainBinding by viewBinding(FragmentMainBinding::bind)
+    private val binding: FragmentMainBinding by viewBinding(FragmentMainBinding::bind)
     private val args by navArgs<MainFragmentArgs>()
     private val forecastAdapter = ForecastsAdapter()
-
 
     override fun initDi() {
         MyApp.instance.getAppComponent()
             .activitySubComponentBuilder()
-            .with(navigator as FragmentActivity)
+            .with(activity as FragmentActivity)
             .build()
             .inject(this)
     }
@@ -41,8 +39,6 @@ class MainFragment : BaseFragment<MainViewModel, FragmentMainBinding>(R.layout.f
         binding.setVariable(BR.viewModel, viewModel)
         viewModel.imageCityData.observe(viewLifecycleOwner) {
             binding.toolbarCityImage.setImageBitmap(it)
-            binding.progressBar.visibility = View.GONE
-
         }
 
         viewModel.forecast.observe(viewLifecycleOwner) {
@@ -53,7 +49,11 @@ class MainFragment : BaseFragment<MainViewModel, FragmentMainBinding>(R.layout.f
 
         MyApp.instance.getViewModelSubComponent().inject(viewModel)
         binding.toolbarCityImage.setImageBitmap(args.image)
-        ICONS[args.weather.weather[0].description]?.let { binding.iconWeather.load(it) }
+        binding.iconWeather.load("http://openweathermap.org/img/wn/${args.weather.weather[0].icon}@2x.png")
+        binding.iconWeather.setOnClickListener {
+            showShortToast(args.weather.weather[0].description)
+        }
+
         initRecycler()
     }
 
@@ -61,10 +61,10 @@ class MainFragment : BaseFragment<MainViewModel, FragmentMainBinding>(R.layout.f
     override fun onStart() {
         super.onStart()
         viewModel.loadForecast()
-
     }
+
     private fun initRecycler() {
         binding.recyclerView.adapter = forecastAdapter
-
     }
+
 }

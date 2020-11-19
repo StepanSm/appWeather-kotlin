@@ -37,9 +37,12 @@ class WeatherWorker(context: Context, workerParams: WorkerParameters) :
                 Result.success()
             }
         }.catch {
-            WeatherBus.instance.post(it)
-            WeatherBus.instance.unregister(this@WeatherWorker)
+            withContext(Dispatchers.Main) {
+                WeatherBus.instance.post(it)
+                WeatherBus.instance.unregister(this@WeatherWorker)
+            }
             Result.failure()
         }.single()
+
     }
 }

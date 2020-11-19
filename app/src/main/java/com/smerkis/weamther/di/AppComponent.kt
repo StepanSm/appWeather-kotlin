@@ -1,5 +1,6 @@
 package com.smerkis.weamther.di
 
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import com.smerkis.weamther.MyApp
 import com.smerkis.weamther.di.modules.*
@@ -50,7 +51,7 @@ interface ViewModelSubComponent {
 }
 
 @FlowPreview
-@Subcomponent(modules = [ActivityModule::class])
+@Subcomponent(modules = [ViewModelModule::class])
 interface ActivitySubComponent {
     @Subcomponent.Builder
     interface Builder {

@@ -27,7 +27,7 @@ class MainViewModel : AbstractViewModel() {
     @Inject
     lateinit var imageRepo: ImageRepo
 
-    val isPhotoLoaded = ObservableField<Boolean>(false)
+    val isPhotoLoaded = ObservableField(true)
     val weatherInfo: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val forecast: MutableLiveData<ApiForecast> by lazy { MutableLiveData<ApiForecast>() }
     val errorData: MutableLiveData<Throwable> by lazy { MutableLiveData<Throwable>() }
@@ -68,6 +68,7 @@ class MainViewModel : AbstractViewModel() {
     }
 
     fun downloadPhoto() {
+        isPhotoLoaded.set(false)
         viewModelScope.launch {
             weatherRepo.loadCity().flatMapConcat { city ->
                 imageRepo.downloadImage(city)
@@ -75,6 +76,7 @@ class MainViewModel : AbstractViewModel() {
                 errorData.postValue(it)
             }.collect {
                 imageCityData.postValue(it)
+                isPhotoLoaded.set(true)
             }
         }
     }

@@ -3,7 +3,6 @@ package com.smerkis.weamther.repository.image
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Environment
-import android.util.Log
 import coil.ImageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
@@ -12,10 +11,11 @@ import com.smerkis.weamther.api.ApiFactory
 import com.smerkis.weamther.model.FlickrResponse
 import com.smerkis.weamther.repository.BaseRepo
 import io.paperdb.Paper
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flow
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 import java.util.*
 
@@ -24,7 +24,7 @@ private const val BOOK_IMAGES = "book_image"
 @FlowPreview
 class PaperImageRepo(val apiFactory: ApiFactory) : BaseRepo(), ImageRepo {
 
-    override suspend fun getPhotoListFromFlickr(city: String) = flow<FlickrResponse> {
+    override suspend fun getPhotoListFromFlickr(city: String) = flow {
         emit(apiFactory.getImageApi().getImages(city))
     }
 
@@ -84,10 +84,6 @@ class PaperImageRepo(val apiFactory: ApiFactory) : BaseRepo(), ImageRepo {
             .data(url).target().build()
         val result = (imageLoader.execute(request) as SuccessResult).drawable
         return (result as BitmapDrawable).bitmap
-    }
-
-    private fun isOnline(): Boolean {
-        return true
     }
 
     private fun String.toUUID() = UUID.nameUUIDFromBytes(this.toByteArray()).toString()

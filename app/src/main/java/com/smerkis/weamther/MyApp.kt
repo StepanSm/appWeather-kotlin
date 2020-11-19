@@ -6,7 +6,9 @@ import com.smerkis.weamther.di.DaggerAppComponent
 import com.smerkis.weamther.di.ViewModelSubComponent
 import com.smerkis.weamther.di.WorkerSubComponent
 import io.paperdb.Paper
+import kotlinx.coroutines.FlowPreview
 
+@FlowPreview
 class MyApp : Application() {
 
     val appName: String
@@ -35,6 +37,11 @@ class MyApp : Application() {
         appComponent = DaggerAppComponent.builder().application(this).build()
         viewModelSubComponent = appComponent.viewModelSubComponentBuilder().build()
         workerSubComponent = appComponent.workerSubComponentBuilder().build()
+
+
+
+
+
     }
 
     companion object {
