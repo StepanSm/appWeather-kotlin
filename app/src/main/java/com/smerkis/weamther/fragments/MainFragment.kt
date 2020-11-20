@@ -1,19 +1,15 @@
 package com.smerkis.weamther.fragments
 
-import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import androidx.annotation.RequiresApi
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import by.kirich1409.viewbindingdelegate.viewBinding
 import coil.load
 import com.smerkis.weamther.BR
 import com.smerkis.weamther.R
-import com.smerkis.weamther.activities.MainActivity
 import com.smerkis.weamther.databinding.FragmentMainBinding
 import com.smerkis.weamther.viewModels.MainViewModel
 import kotlinx.coroutines.FlowPreview
@@ -32,7 +28,6 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-
     }
 
     @FlowPreview
@@ -55,20 +50,13 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
             showShortToast(args.weather.weather[0].description)
         }
 
-        binding.fab.setOnClickListener {
-            findNavController().navigate(MainFragmentDirections.actionMainFragmentToHistoryFragment())
-        }
-
-        val menu = binding.actionMenu.menu
-        (activity as MainActivity).menuInflater.inflate(R.menu.maim_menu, menu)
-
         initRecycler()
     }
 
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.maim_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

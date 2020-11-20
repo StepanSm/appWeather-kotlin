@@ -11,7 +11,9 @@ import com.smerkis.weamther.viewModels.SplashViewModel
 import isdigital.errorhandler.ErrorHandler
 import kotlinx.coroutines.FlowPreview
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.component.KoinApiExtension
 
+@KoinApiExtension
 @FlowPreview
 class SplashFragment : BaseFragment(R.layout.fragment_splash) {
 

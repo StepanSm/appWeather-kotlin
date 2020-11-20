@@ -58,6 +58,7 @@ class ImageRepoInstrumentalTest : BaseInstrumentalTest() {
         mockResponse()
         runBlocking {
             imageRepo.getRandomPhotoUrl(TEST_CITY).collect {
+
                 assertEquals(it, TEST_URL)
             }
         }

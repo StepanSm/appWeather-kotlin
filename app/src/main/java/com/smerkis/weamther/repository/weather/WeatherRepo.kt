@@ -15,6 +15,7 @@ interface WeatherRepo {
     suspend fun saveWeather(city: String, weather: WeatherInfo): Flow<Boolean>
     suspend fun loadWeather(city: String): Flow<WeatherInfo?>
 
+
     suspend fun downloadWeather(city: String): Flow<WeatherInfo>
     suspend fun loadWeatherHistory(): Flow<HashMap<String, WeatherInfo>>
 }
