@@ -20,94 +20,74 @@
     <androidx.constraintlayout.motion.widget.MotionLayout
         android:id="@+id/motionLayout"
         android:layout_width="match_parent"
-
         android:layout_height="match_parent"
-        android:background="@color/white"
         app:layoutDescription="@xml/fragment_main_xml_motionlayout_scene">
 
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_fore_cast"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/gray"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@{String.format(@string/forecast_for, weather.name)}"
-                android:textColor="@color/black"
-                android:textSize="18sp"
-                tools:text="forecast" />
-        </androidx.appcompat.widget.Toolbar>
-
-        <FrameLayout
-            android:id="@+id/photo_city_container"
+        <ImageView
+            android:id="@+id/toolbar_city_image"
             android:layout_width="match_parent"
             android:layout_height="220dp"
-            android:background="@android:color/black"
+            android:contentDescription="@null"
+            android:onClick="@{()->viewModel.downloadPhoto()}"
+            android:scaleType="centerCrop"
+            android:src="@drawable/city_example"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="@{safeUnbox(viewModel.isPhotoLoaded() ? View.INVISIBLE : View.INVISIBLE)}"
+            app:layout_constraintBottom_toBottomOf="@+id/toolbar_city_image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:alpha="0.5"
-                android:background="@android:color/black"
-                android:visibility="@{safeUnbox(viewModel.isPhotoLoaded() ? View.INVISIBLE : View.VISIBLE)}" />
+        <androidx.appcompat.widget.ActionMenuView
+            android:id="@+id/action_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/forecast"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginHorizontal="@dimen/margin_8"
+            android:textSize="18sp"
+            android:text="@string/forecast_for"
+            app:layout_constraintBottom_toBottomOf="@+id/city_name"
+            app:layout_constraintEnd_toStartOf="@+id/city_name"
+            app:layout_constraintTop_toTopOf="@+id/city_name" />
 
-            <ImageView
-                android:id="@+id/toolbar_city_image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:adjustViewBounds="true"
-                android:contentDescription="@null"
-                android:fitsSystemWindows="true"
-                android:onClick="@{()->viewModel.downloadPhoto()}"
-                android:scaleType="centerCrop"
-                android:src="@drawable/city_example"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/city_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="@{weather.name}"
+            android:textColor="@color/black"
+            android:textSize="28sp"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toBottomOf="@+id/toolbar_city_image"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Moscow" />
 
-
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|start"
-                android:layout_marginStart="@dimen/margin_16"
-                android:layout_marginLeft="@dimen/margin_16"
-                android:layout_marginBottom="@dimen/margin_16">
-
-                <TextView
-                    android:id="@+id/city_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="@{weather.name}"
-                    android:textColor="@color/black"
-                    android:textSize="28sp"
-                    android:textStyle="normal"
-                    tools:text="Moscow" />
-            </FrameLayout>
-
-
-            <ProgressBar
-                android:id="@+id/progress_bar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:visibility="@{safeUnbox(viewModel.isPhotoLoaded() ? View.INVISIBLE : View.VISIBLE)}" />
-
-        </FrameLayout>
-
+        <View
+            android:id="@+id/sep"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_city_image" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
@@ -118,9 +98,9 @@
             android:contentDescription="@string/fab_search_city"
             android:elevation="4dp"
             android:src="@drawable/ic_baseline_search_24"
-            app:layout_constraintBottom_toBottomOf="@+id/photo_city_container"
+            app:layout_constraintBottom_toBottomOf="@+id/toolbar_city_image"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/photo_city_container"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_city_image"
             tools:targetApi="lollipop" />
 
 

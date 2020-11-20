@@ -8,13 +8,11 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.MockResponse
 import org.junit.Assert.*
 import org.junit.Test
-import javax.inject.Inject
 
 private const val TEST_URL = "https://live.staticflickr.com/424/19743825518_f4aa88de9b.jpg"
 
 class ImageRepoInstrumentalTest : BaseInstrumentalTest() {
 
-    @Inject
     lateinit var imageRepo: ImageRepo
 
     private val bitmapMock = Bitmap.createBitmap(500, 255, Bitmap.Config.ARGB_8888)
