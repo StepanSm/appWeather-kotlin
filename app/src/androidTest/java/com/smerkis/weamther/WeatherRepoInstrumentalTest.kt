@@ -2,16 +2,24 @@ package com.smerkis.weamther
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.smerkis.weamther.api.ApiFactory
+import com.smerkis.weamther.diTest.appModule
+import com.smerkis.weamther.diTest.imageRepoMockedModule
+import com.smerkis.weamther.diTest.networkMockedComponent
+import com.smerkis.weamther.diTest.weatherRepoMockedModule
 import com.smerkis.weamther.model.WeatherInfo
 import com.smerkis.weamther.repository.weather.WeatherRepo
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.MockResponse
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.core.component.inject
+import org.koin.core.context.startKoin
+import retrofit2.HttpException
+import java.net.HttpURLConnection
 
 const val TEST_CITY = "Kurgan"
 const val TEST_ID = 78
@@ -20,15 +28,24 @@ const val TEST_TEMPERATURE = 59.0
 @FlowPreview
 @RunWith(AndroidJUnit4::class)
 class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
-    lateinit var app: MyApp
 
-    lateinit var apiFactory: ApiFactory
+    private val app: MyApp by inject()
+    private val apiFactory: ApiFactory by inject()
 
-    lateinit var weatherRepo: WeatherRepo
+    private val weatherRepo: WeatherRepo by inject()
     lateinit var testWeather: WeatherInfo
 
     override fun setup() {
         super.setup()
+        startKoin {
+            modules(
+                listOf(
+                    appModule(),
+                    networkMockedComponent(webServer.url("/").toString()),
+                    weatherRepoMockedModule()
+                )
+            )
+        }
     }
 
     @Test
@@ -50,14 +67,23 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
     fun save_city_ok() {
         mockResponse()
         runBlocking {
-
+            val count = weatherRepo.saveCity(TEST_CITY).count {
+                it
+            }
+            val count2 = weatherRepo.saveCity(TEST_CITY).count { !it }
+            assertEquals(count, 1)
+            assertEquals(0, count2)
         }
     }
 
     @Test
-    fun load_list_Ok() {
+    fun load_city_Ok() {
         mockResponse()
         runBlocking {
+            val count = weatherRepo.loadCity().collect {
+                assertNotNull(it)
+                assertEquals(it.toLowerCase(), TEST_CITY.toLowerCase())
+            }
 
         }
     }
@@ -66,16 +92,11 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
     fun download_weather_Ok() {
         mockResponse()
         runBlocking {
-            weatherRepo.downloadWeather(TEST_CITY).take(1).collect { weatherInfo ->
-
-                weatherRepo.downloadWeather(TEST_CITY).take(1).collect {
-
-                    val weatherInfo = it
-
-                    assertEquals(weatherInfo.name, TEST_CITY)
-                    assertEquals(weatherInfo.weather[0].id, TEST_ID)
-                    assertEquals(weatherInfo.main.temp, TEST_TEMPERATURE, 0.0)
-                }
+            weatherRepo.downloadWeather(TEST_CITY).collect { weatherInfo ->
+                assertNotNull(weatherInfo)
+                assertEquals(weatherInfo.name, TEST_CITY)
+                assertEquals(weatherInfo.weather[0].id, TEST_ID)
+                assertEquals(weatherInfo.main.temp, TEST_TEMPERATURE, 0.0)
             }
         }
     }
@@ -85,12 +106,12 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
         mockResponse()
         runBlocking {
             testWeather = apiFactory.getWeatherApi().getWeather(TEST_CITY)
-            weatherRepo.saveWeather(TEST_CITY, testWeather).take(1)
-                .collect {
-                    assertEquals(it, true)
 
-                    assertEquals(it, true)
-                }
+            val count1 = weatherRepo.saveWeather(TEST_CITY, testWeather).count { it }
+            val count2 = weatherRepo.saveWeather(TEST_CITY, testWeather).count { !it }
+
+            assertEquals(1, count1)
+            assertEquals(0, count2)
         }
     }
 
@@ -99,17 +120,11 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
         mockResponse()
         runBlocking {
             testWeather = apiFactory.getWeatherApi().getWeather(TEST_CITY)
-            weatherRepo.loadWeather(TEST_CITY).take(1).collect { loadedWeather ->
 
-                testWeather = apiFactory.getWeatherApi().getWeather(TEST_CITY)
-                weatherRepo.loadWeather(TEST_CITY).take(1).collect {
-
-                    val loadedWeather = it
-
-                    assertEquals(testWeather.name, loadedWeather?.name)
-                    assertEquals(testWeather.weather[0].id, loadedWeather?.weather?.get(0)?.id)
-                    assertEquals(testWeather.main.temp, loadedWeather?.main?.temp)
-                }
+            weatherRepo.loadWeather(TEST_CITY).collect { loadedWeather ->
+                assertEquals(testWeather.name, loadedWeather?.name)
+                assertEquals(testWeather.weather[0].id, loadedWeather?.weather?.get(0)?.id)
+                assertEquals(testWeather.main.temp, loadedWeather?.main?.temp)
             }
         }
     }
@@ -127,18 +142,19 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
     }
 
 
-    @Test(expected = ClassCastException::class)
-    fun cce() {
-        mockResponse()
+    @Test(expected = HttpException::class)
+    fun download_weather_error() {
+        mockResponse(HttpURLConnection.HTTP_BAD_REQUEST)
         runBlocking {
             weatherRepo.downloadWeather(TEST_CITY).take(1).collect {
+                assertEquals(it.weather.isNullOrEmpty(), true)
             }
         }
     }
 
 
-    override fun createResponse(): MockResponse {
-        val json = """{
+    override fun createResponse() =
+        """{
     "coord": {
         "lon": 65.33,
         "lat": 55.45
@@ -181,6 +197,4 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
     "name": "$TEST_CITY",
     "cod": 200
 }"""
-        return getResponse(json)
-    }
 }
