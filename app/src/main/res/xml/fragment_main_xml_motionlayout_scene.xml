@@ -17,7 +17,7 @@
             android:id="@+id/city_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            motion:layout_constraintBottom_toBottomOf="@+id/toolbar_city_image"
+            motion:layout_constraintBottom_toBottomOf="@+id/h_guideline_220"
             motion:layout_constraintStart_toStartOf="parent">
 
         <CustomAttribute
@@ -36,6 +36,7 @@
                 motion:attributeName="imageAlpha"
                 motion:customIntegerValue="255" />
         </Constraint>
+
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/end">
@@ -72,10 +73,11 @@
         <Constraint
             android:id="@+id/city_name"
             android:layout_width="wrap_content"
+            android:layout_margin="8dp"
             android:layout_height="wrap_content"
-            motion:layout_constraintBottom_toBottomOf="@+id/toolbar_city_image"
-            motion:layout_constraintStart_toStartOf="@+id/forecast"
-            motion:layout_constraintTop_toTopOf="@+id/toolbar_city_image">
+            motion:layout_constraintBottom_toBottomOf="@+id/h_guideline_abs"
+            motion:layout_constraintStart_toEndOf="@+id/forecast"
+            motion:layout_constraintTop_toTopOf="parent">
 
             <CustomAttribute
                 motion:attributeName="textSize"
@@ -141,10 +143,10 @@
             android:id="@+id/forecast"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="visible"
-            motion:layout_constraintBottom_toBottomOf="@+id/city_name"
-            motion:layout_constraintEnd_toStartOf="@+id/city_name"
-            motion:layout_constraintTop_toTopOf="@+id/city_name" />
+            android:layout_marginLeft="@dimen/margin_8"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintBottom_toBottomOf="@+id/h_guideline_abs"
+            motion:layout_constraintStart_toStartOf="parent" />
 
 
     </ConstraintSet>

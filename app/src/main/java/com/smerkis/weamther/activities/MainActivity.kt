@@ -1,6 +1,7 @@
 package com.smerkis.weamther.activities
 
 import android.os.Bundle
+import android.os.PersistableBundle
 import androidx.fragment.app.FragmentActivity
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
@@ -12,7 +13,6 @@ import java.util.concurrent.TimeUnit
 
 @KoinApiExtension
 class MainActivity : FragmentActivity() {
-
 
     private val weatherWorker = PeriodicWorkRequest.Builder(
         WeatherWorker::class.java,
@@ -27,5 +27,10 @@ class MainActivity : FragmentActivity() {
         WorkManager.getInstance(this)
             .enqueueUniquePeriodicWork("weatherWork", ExistingPeriodicWorkPolicy.REPLACE, weatherWorker)
 
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.clear()
+        super.onSaveInstanceState(outState)
     }
 }

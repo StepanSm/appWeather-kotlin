@@ -13,7 +13,6 @@
         <action
             android:id="@+id/action_splashFragment_to_mainFragment"
             app:destination="@id/mainFragment"
-
             app:enterAnim="@anim/slide_h_in"
             app:popUpTo="@id/splashFragment"
             app:popUpToInclusive="true" />

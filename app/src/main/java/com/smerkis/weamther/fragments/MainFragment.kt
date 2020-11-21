@@ -11,6 +11,7 @@ import coil.load
 import com.smerkis.weamther.BR
 import com.smerkis.weamther.R
 import com.smerkis.weamther.databinding.FragmentMainBinding
+import com.smerkis.weamther.logD
 import com.smerkis.weamther.viewModels.MainViewModel
 import kotlinx.coroutines.FlowPreview
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -43,7 +44,7 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
         }
 
         binding.setVariable(BR.weather, args.weather)
-
+        logD(args.image.byteCount.toString())
         binding.toolbarCityImage.setImageBitmap(args.image)
         binding.iconWeather.load("http://openweathermap.org/img/wn/${args.weather.weather[0].icon}@2x.png")
         binding.iconWeather.setOnClickListener {

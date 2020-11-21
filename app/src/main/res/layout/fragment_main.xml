@@ -59,26 +59,34 @@
             android:id="@+id/forecast"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             android:layout_marginHorizontal="@dimen/margin_8"
-            android:textSize="18sp"
+            android:layout_marginLeft="@dimen/margin_8"
             android:text="@string/forecast_for"
-            app:layout_constraintBottom_toBottomOf="@+id/city_name"
-            app:layout_constraintEnd_toStartOf="@+id/city_name"
-            app:layout_constraintTop_toTopOf="@+id/city_name" />
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@+id/toolbar_city_image"
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <TextView
+
+        <FrameLayout
             android:id="@+id/city_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:text="@{weather.name}"
-            android:textColor="@color/black"
-            android:textSize="28sp"
-            android:textStyle="normal"
             app:layout_constraintBottom_toBottomOf="@+id/toolbar_city_image"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:text="Moscow" />
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/margin_8"
+                android:text="@{weather.name}"
+                android:textColor="@color/black"
+                android:textSize="28sp"
+                android:textStyle="normal"
+
+                tools:text="Moscow" />
+
+        </FrameLayout>
+
 
         <View
             android:id="@+id/sep"
@@ -240,6 +248,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/date_time"
             tools:listitem="@layout/forecast_item" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/h_guideline_220"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="220dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/h_guideline_abs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="?attr/actionBarSize" />
 
     </androidx.constraintlayout.motion.widget.MotionLayout>
 </layout>
