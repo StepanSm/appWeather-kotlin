@@ -3,17 +3,15 @@ package com.smerkis.weamther
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.smerkis.weamther.api.ApiFactory
 import com.smerkis.weamther.diTest.appModule
-import com.smerkis.weamther.diTest.imageRepoMockedModule
 import com.smerkis.weamther.diTest.networkMockedComponent
 import com.smerkis.weamther.diTest.weatherRepoMockedModule
 import com.smerkis.weamther.model.WeatherInfo
 import com.smerkis.weamther.repository.weather.WeatherRepo
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.runBlocking
-import okhttp3.mockwebserver.MockResponse
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
+import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.core.component.inject
@@ -21,7 +19,7 @@ import org.koin.core.context.startKoin
 import retrofit2.HttpException
 import java.net.HttpURLConnection
 
-const val TEST_CITY = "qwertyuiop"
+const val TEST_CITY = "New-York"
 const val TEST_ID = 78
 const val TEST_TEMPERATURE = 59.0
 
@@ -64,90 +62,71 @@ class WeatherRepoInstrumentalTest : BaseInstrumentalTest() {
     }
 
     @Test
-    fun save_city_ok() {
+    fun save_city_load_city_ok() {
         mockResponse()
         runBlocking {
-            val count = weatherRepo.saveCity(TEST_CITY).count {
-                it
-            }
-            val count2 = weatherRepo.saveCity(TEST_CITY).count { !it }
-            assertEquals(count, 1)
-            assertEquals(0, count2)
-        }
-    }
-
-    @Test
-    fun load_city_Ok() {
-        mockResponse()
-        runBlocking {
-            val count = weatherRepo.loadCity().collect {
+            weatherRepo.saveCity(TEST_CITY)
+            weatherRepo.loadCity().collect {
                 assertNotNull(it)
-                assertEquals(it.toLowerCase(), TEST_CITY.toLowerCase())
-            }
-
-        }
-    }
-
-    @Test
-    fun download_weather_Ok() {
-        mockResponse()
-        runBlocking {
-            weatherRepo.downloadWeather(TEST_CITY).collect { weatherInfo ->
-                assertNotNull(weatherInfo)
-                assertEquals(weatherInfo.name, TEST_CITY)
-                assertEquals(weatherInfo.weather[0].id, TEST_ID)
-                assertEquals(weatherInfo.main.temp, TEST_TEMPERATURE, 0.0)
+                assertEquals(it, TEST_CITY)
             }
         }
     }
 
     @Test
-    fun save_weather_Ok() {
+    fun load_weather_Ok() {
         mockResponse()
         runBlocking {
+            weatherRepo.loadWeather(TEST_CITY).collect { weatherInfo ->
+                if (weatherInfo != null) {
+                    assertEquals(weatherInfo.name, TEST_CITY)
+                    assertEquals(weatherInfo.weather[0].id, TEST_ID)
+                    assertEquals(weatherInfo.main.temp, TEST_TEMPERATURE, 0.0)
+                } else {
+                    throw NullPointerException()
+                }
+            }
+        }
+    }
+
+    @Test
+    fun save_weather_load_weather_history_Ok() {
+        mockResponse()
+        runBlocking {
+
+            var records = 0
+            weatherRepo.deleteItemHistory(TEST_CITY)
+
+            weatherRepo.loadWeatherHistory().collect {
+                assertNull(it[TEST_CITY])
+                records = it.size
+            }
+
             testWeather = apiFactory.getWeatherApi().getWeather(TEST_CITY)
 
-            val count1 = weatherRepo.saveWeather(TEST_CITY, testWeather).count { it }
-            val count2 = weatherRepo.saveWeather(TEST_CITY, testWeather).count { !it }
+            weatherRepo.saveWeather(testWeather)
 
-            assertEquals(1, count1)
-            assertEquals(0, count2)
-        }
-    }
+            weatherRepo.loadWeatherHistory().collect {
+                assertNotNull(it)
+                assertNotNull(it[TEST_CITY])
+                assertEquals(it[TEST_CITY], testWeather)
+                assertEquals(it.size, records + 1)
+            }
 
-    @Test
-    fun load_weather_ok() {
-        mockResponse()
-        runBlocking {
-            testWeather = apiFactory.getWeatherApi().getWeather(TEST_CITY)
-
-            weatherRepo.loadWeather(TEST_CITY).collect { loadedWeather ->
-                assertEquals(testWeather.name, loadedWeather?.name)
-                assertEquals(testWeather.weather[0].id, loadedWeather?.weather?.get(0)?.id)
-                assertEquals(testWeather.main.temp, loadedWeather?.main?.temp)
+            weatherRepo.deleteItemHistory(TEST_CITY)
+            weatherRepo.loadWeatherHistory().collect {
+                assertNull(it[TEST_CITY])
+                assertEquals(it.size, records)
             }
         }
     }
-
-    @Test
-    fun load_weather_history_Ok() {
-        mockResponse()
-        runBlocking {
-            weatherRepo.loadWeatherHistory().take(1).collect {
-                assertEquals(1, it.size)
-                assertEquals(1, it.size)
-            }
-        }
-
-    }
-
 
     @Test(expected = HttpException::class)
     fun download_weather_error() {
         mockResponse(HttpURLConnection.HTTP_BAD_REQUEST)
         runBlocking {
-            weatherRepo.downloadWeather(TEST_CITY).take(1).collect {
-                assertEquals(it.weather.isNullOrEmpty(), true)
+            weatherRepo.loadWeather(TEST_CITY).take(1).collect {
+                assertEquals(it?.weather.isNullOrEmpty(), true)
             }
         }
     }

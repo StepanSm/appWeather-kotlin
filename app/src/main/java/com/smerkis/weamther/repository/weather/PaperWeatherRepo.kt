@@ -28,9 +28,9 @@ class PaperWeatherRepo(private val apiFactory: ApiFactory) : BaseRepo(), Weather
 
             saveWeather(fromServer)
             saveCity(fromServer.name)
-            loadCacheWeather(fromServer.name)
+            weatherFromCache(fromServer.name)
         } else {
-            loadCacheWeather(city)
+            weatherFromCache(city)
         }
     }
 
@@ -53,7 +53,7 @@ class PaperWeatherRepo(private val apiFactory: ApiFactory) : BaseRepo(), Weather
             }
         }
 
-    private suspend fun loadCacheWeather(city: String) = flow {
+    private suspend fun weatherFromCache(city: String) = flow {
         getHistory()[city.trim()]?.let {
             emit(it)
         }

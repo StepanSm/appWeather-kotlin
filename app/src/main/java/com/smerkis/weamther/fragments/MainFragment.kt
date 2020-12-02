@@ -6,17 +6,17 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
-import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import by.kirich1409.viewbindingdelegate.viewBinding
 import coil.load
 import com.smerkis.weamther.R
 import com.smerkis.weamther.activities.MainActivity
+import com.smerkis.weamther.components.WEATHER_ICON
 import com.smerkis.weamther.databinding.FragmentMainBinding
 import com.smerkis.weamther.getDateString
 import com.smerkis.weamther.getTemperature
-import com.smerkis.weamther.getTimeString
 import com.smerkis.weamther.model.WeatherInfo
 import com.smerkis.weamther.viewModels.MainViewModel
 import kotlinx.coroutines.FlowPreview
@@ -26,6 +26,8 @@ import org.koin.core.component.KoinApiExtension
 
 @KoinApiExtension
 @FlowPreview
+
+
 class MainFragment : BaseFragment(R.layout.fragment_main) {
 
     private val vModel: MainViewModel by viewModel()
@@ -34,9 +36,20 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
     private val forecastAdapter = ForecastsAdapter()
     private lateinit var weather: WeatherInfo
 
+    companion object {
+        const val SELECTED_CITY = "city_ch"
+        const val MAIN_FRAGMENT = "main_frag"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+
+        setFragmentResultListener(MAIN_FRAGMENT) { _, bundle ->
+            val city = bundle.getString(SELECTED_CITY)
+            if (city != null)
+                vModel.searchCity(city)
+        }
     }
 
     @FlowPreview
@@ -44,10 +57,7 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
         super.onViewCreated(view, savedInstanceState)
         weather = args.weather
 
-        setHasOptionsMenu(true)
-
-        (activity as MainActivity).setSupportActionBar(binding.tb)
-
+        createToolbar(binding.tb, shouldSetUpBtn = false)
         setObserver()
         fillWidget()
         setListeners()
@@ -62,11 +72,9 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
             }
             weatherInfo.observe(viewLifecycleOwner) {
                 weather = it
+                downloadNewImage()
                 fillWidget()
-            }
 
-            loadForecast().observe(viewLifecycleOwner) {
-                forecastAdapter.submitList(it.list)
             }
 
             errorData.observe(viewLifecycleOwner) {
@@ -77,11 +85,13 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        (activity as MainActivity).menuInflater.inflate(R.menu.maim_menu, menu)
+        (activity as MainActivity).menuInflater.inflate(R.menu.main_menu, menu)
     }
 
     private fun fillWidget() {
-
+        vModel.loadForecast().observe(viewLifecycleOwner) { forecast ->
+            forecastAdapter.submitList(forecast.list)
+        }
 
         binding.apply {
             cityImage.load(args.imagePath)
@@ -89,14 +99,14 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
             cityName.text = weather.name
             currentWeather.apply {
                 temp.text = getTemperature(weather.main.temp)
-                iconWeather.load("http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png")
+                WEATHER_ICON[weather.weather[0].icon]?.let { iconWeather.load(it) }
                 range.text = getTemperature(weather.main.temp_max)
                 pressureData.text =
                     format(getString(R.string.data_pressure), weather.main.pressure)
                 windData.text =
                     format(getString(R.string.wind_info_data), weather.wind.speed)
                 humidityData.text = weather.main.getHumidity()
-                dateTime.text =  getDateString(weather.dt.toLong())
+                dateTime.text = getDateString(weather.dt.toLong())
             }
         }
     }
@@ -104,6 +114,7 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.go_to_history -> findNavController().navigate(MainFragmentDirections.actionMainFragmentToHistoryFragment())
+            R.id.refresh -> vModel.searchCity(weather.name)
         }
         return super.onOptionsItemSelected(item)
     }

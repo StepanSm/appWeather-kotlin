@@ -2,6 +2,9 @@ package com.smerkis.weamther.fragments
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
+import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import coil.load
 import com.smerkis.weamther.R
@@ -11,6 +14,7 @@ import com.smerkis.weamther.fragments.adapter.HistoryAdapter
 import com.smerkis.weamther.viewModels.HistoryViewModel
 import kotlinx.coroutines.FlowPreview
 import org.koin.android.ext.android.inject
+import org.koin.core.component.KoinApiExtension
 
 @FlowPreview
 class HistoryFragment : BaseFragment(R.layout.fragment_history), HistoryAdapter.CityClickContract {
@@ -21,8 +25,12 @@ class HistoryFragment : BaseFragment(R.layout.fragment_history), HistoryAdapter.
     private val historyAdapter = HistoryAdapter()
 
 
+    @KoinApiExtension
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        createToolbar(binding.tb)
+
         historyAdapter.countryClickContract = this
         binding.rv.apply {
             adapter = historyAdapter
@@ -51,8 +59,11 @@ class HistoryFragment : BaseFragment(R.layout.fragment_history), HistoryAdapter.
 
     }
 
+    @KoinApiExtension
     override fun onCityClicked(city: String) {
         showShortToast(city)
+        setFragmentResult(MainFragment.MAIN_FRAGMENT, bundleOf(MainFragment.SELECTED_CITY to city))
+        findNavController().popBackStack()
     }
 
     override fun deleteCity(city: String) {

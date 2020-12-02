@@ -1,6 +1,5 @@
 package com.smerkis.weamther.repository.weather
 
-import com.smerkis.weamther.model.ApiForecast
 import com.smerkis.weamther.model.WeatherInfo
 import kotlinx.coroutines.flow.Flow
 

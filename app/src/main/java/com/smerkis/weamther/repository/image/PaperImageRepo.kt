@@ -36,11 +36,11 @@ class PaperImageRepo(private val apiFactory: ApiFactory) : BaseRepo(), ImageRepo
         return Paper.book(BOOK_IMAGE).read(PAGE_IMAGE)
     }
 
-    private fun caching(url: String) {
+    private suspend fun caching(url: String) {
         val imageLoader = ImageLoader(MyApp.instance)
         val request = ImageRequest.Builder(MyApp.instance)
             .data(url).build()
-        imageLoader.enqueue(request)
+        imageLoader.execute(request)
 
         Paper.book(BOOK_IMAGE).write(PAGE_IMAGE, url)
     }
