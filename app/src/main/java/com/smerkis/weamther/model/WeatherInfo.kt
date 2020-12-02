@@ -58,11 +58,8 @@ data class Main(
     val temp_min: Double
 ) : Parcelable {
 
-    fun getTemp() =
-        "$temp \u2103"
-
     fun getHumidity(): String {
-        return humidity.toString()
+        return "$humidity \u0025"
     }
 
 }

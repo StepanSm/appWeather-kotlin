@@ -1,5 +1,7 @@
 package com.smerkis.weamther.di
 
+import com.smerkis.weamther.repository.forecast.ForecastRepo
+import com.smerkis.weamther.repository.forecast.ForecastRepoImpl
 import com.smerkis.weamther.repository.image.ImageRepo
 import com.smerkis.weamther.repository.image.PaperImageRepo
 import com.smerkis.weamther.repository.weather.PaperWeatherRepo
@@ -12,4 +14,5 @@ import org.koin.dsl.module
 val repositoryModule = module {
     single { PaperWeatherRepo(get()) } bind (WeatherRepo::class)
     single { PaperImageRepo(get()) } bind (ImageRepo::class)
+    single { ForecastRepoImpl(get()) } bind (ForecastRepo::class)
 }

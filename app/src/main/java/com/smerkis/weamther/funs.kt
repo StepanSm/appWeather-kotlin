@@ -1,11 +1,16 @@
 package com.smerkis.weamther
 
 import android.content.Context
-import android.util.Log
+import android.content.Context.CONNECTIVITY_SERVICE
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.net.NetworkInfo
+import android.os.Build
 import android.widget.Toast
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 private var formatter = SimpleDateFormat("h:mm aa", Locale.getDefault())
 
@@ -25,18 +30,29 @@ fun getTemperature(temp: Double): String {
     return "${df.format(temp)}°C"
 }
 
-fun Any.logD(msg: String, tag: String = this::class.simpleName.toString()) {
-    Log.d(tag, msg)
-}
-
-fun Any.logI(msg: String, tag: String = this::class.simpleName.toString()) {
-    Log.i(tag, msg)
-}
-
-fun Any.logE(msg: String, tag: String = this::class.simpleName.toString()) {
-    Log.e(tag, msg)
-}
-
 fun showLongToast(msg: String) {
     Toast.makeText(MyApp.instance as Context, msg, Toast.LENGTH_LONG).show()
 }
+
+ fun isNetworkAvailable(context: Context): Boolean {
+    val connectivityManager = context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        val nw      = connectivityManager.activeNetwork ?: return false
+        val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
+        return when {
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+            //for other device how are able to connect with Ethernet
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+            //for check internet over Bluetooth
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH) -> true
+            else -> false
+        }
+    } else {
+        val nwInfo = connectivityManager.activeNetworkInfo ?: return false
+        return nwInfo.isConnected
+    }
+}
+

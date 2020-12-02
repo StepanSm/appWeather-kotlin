@@ -21,7 +21,7 @@ import org.koin.core.context.startKoin
 import retrofit2.HttpException
 import java.net.HttpURLConnection
 
-const val TEST_CITY = "Kurgan"
+const val TEST_CITY = "qwertyuiop"
 const val TEST_ID = 78
 const val TEST_TEMPERATURE = 59.0
 

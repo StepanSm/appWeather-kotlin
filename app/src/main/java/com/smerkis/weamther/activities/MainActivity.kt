@@ -2,6 +2,7 @@ package com.smerkis.weamther.activities
 
 import android.os.Bundle
 import android.os.PersistableBundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
@@ -12,7 +13,7 @@ import org.koin.core.component.KoinApiExtension
 import java.util.concurrent.TimeUnit
 
 @KoinApiExtension
-class MainActivity : FragmentActivity() {
+class MainActivity : AppCompatActivity() {
 
     private val weatherWorker = PeriodicWorkRequest.Builder(
         WeatherWorker::class.java,

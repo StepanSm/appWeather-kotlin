@@ -6,11 +6,16 @@
     <string name="max_temp">Max temp</string>
     <string name="date">Date</string>
     <string name="time">Time</string>
-    <string name="info_pressure">Pressure: </string>
-    <string name="wind_info">Wind: </string>
+    <string name="title_pressure">Pressure:</string>
+    <string name="data_pressure">%smmHg</string>
+    <string name="wind_info_title">Wind: </string>
+    <string name="wind_info_data">%sm/s</string>
+
     <string name="network_connect">Please check your internet connectivity and try again!</string>
 
-    <string name="humidity_info">Humidity: </string>
+    <string name="humidity_info_title">Humidity: </string>
+    <string name="humidity_info_data">%s</string>
+    <string name="temp">%s</string>
     <string name="forecast_for">5 day Forecast for  </string>
     <string name="fab_search_city">search_city</string>
     <string name="main_menu_history_title">History</string>

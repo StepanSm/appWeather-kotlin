@@ -53,7 +53,6 @@ object MyErrorHandler {
         // Always log to a crash/error reporting service
         .always { throwable, errorHandler ->
             throwable.message?.let {
-                logE(it)
             }
         }
 

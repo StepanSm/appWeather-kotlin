@@ -5,15 +5,22 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.EditText
+import androidx.appcompat.widget.Toolbar
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import by.kirich1409.viewbindingdelegate.viewBinding
 import coil.load
-import com.smerkis.weamther.BR
 import com.smerkis.weamther.R
+import com.smerkis.weamther.activities.MainActivity
 import com.smerkis.weamther.databinding.FragmentMainBinding
-import com.smerkis.weamther.logD
+import com.smerkis.weamther.getDateString
+import com.smerkis.weamther.getTemperature
+import com.smerkis.weamther.getTimeString
+import com.smerkis.weamther.model.WeatherInfo
 import com.smerkis.weamther.viewModels.MainViewModel
 import kotlinx.coroutines.FlowPreview
+import okhttp3.internal.format
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinApiExtension
 
@@ -21,10 +28,11 @@ import org.koin.core.component.KoinApiExtension
 @FlowPreview
 class MainFragment : BaseFragment(R.layout.fragment_main) {
 
-    private val viewModel: MainViewModel by viewModel()
+    private val vModel: MainViewModel by viewModel()
     private val binding: FragmentMainBinding by viewBinding(FragmentMainBinding::bind)
     private val args by navArgs<MainFragmentArgs>()
     private val forecastAdapter = ForecastsAdapter()
+    private lateinit var weather: WeatherInfo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,44 +42,101 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
     @FlowPreview
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.setVariable(BR.viewModel, viewModel)
-        viewModel.imageCityData.observe(viewLifecycleOwner) {
-            binding.toolbarCityImage.setImageBitmap(it)
-        }
+        weather = args.weather
 
-        viewModel.forecast.observe(viewLifecycleOwner) {
-            forecastAdapter.submitList(it.list)
-        }
+        setHasOptionsMenu(true)
 
-        binding.setVariable(BR.weather, args.weather)
-        logD(args.image.byteCount.toString())
-        binding.toolbarCityImage.setImageBitmap(args.image)
-        binding.iconWeather.load("http://openweathermap.org/img/wn/${args.weather.weather[0].icon}@2x.png")
-        binding.iconWeather.setOnClickListener {
-            showShortToast(args.weather.weather[0].description)
-        }
+        (activity as MainActivity).setSupportActionBar(binding.tb)
 
-        initRecycler()
+        setObserver()
+        fillWidget()
+        setListeners()
     }
 
+    private fun setObserver() {
+
+        vModel.apply {
+            imageCity.observe(viewLifecycleOwner) {
+                binding.cityImage.load(it)
+                binding.progressBar.visibility = View.GONE
+            }
+            weatherInfo.observe(viewLifecycleOwner) {
+                weather = it
+                fillWidget()
+            }
+
+            loadForecast().observe(viewLifecycleOwner) {
+                forecastAdapter.submitList(it.list)
+            }
+
+            errorData.observe(viewLifecycleOwner) {
+                handleErrorCode(it)
+            }
+        }
+
+    }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.maim_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
+        (activity as MainActivity).menuInflater.inflate(R.menu.maim_menu, menu)
+    }
+
+    private fun fillWidget() {
+
+
+        binding.apply {
+            cityImage.load(args.imagePath)
+            recyclerView.adapter = forecastAdapter
+            cityName.text = weather.name
+            currentWeather.apply {
+                temp.text = getTemperature(weather.main.temp)
+                iconWeather.load("http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png")
+                range.text = getTemperature(weather.main.temp_max)
+                pressureData.text =
+                    format(getString(R.string.data_pressure), weather.main.pressure)
+                windData.text =
+                    format(getString(R.string.wind_info_data), weather.wind.speed)
+                humidityData.text = weather.main.getHumidity()
+                dateTime.text =  getDateString(weather.dt.toLong())
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.go_to_history -> findNavController().navigate(MainFragmentDirections.actionMainFragmentToHistoryFragment())
+        }
         return super.onOptionsItemSelected(item)
     }
 
-
-    override fun onStart() {
-        super.onStart()
-        viewModel.loadForecast()
+    private fun setListeners() {
+        binding.apply {
+            fab.setOnClickListener {
+                searchCity()
+            }
+            currentWeather.iconWeather.setOnClickListener { showShortToast(weather.weather[0].description) }
+            cityImage.setOnClickListener {
+                progressBar.visibility = View.VISIBLE
+                vModel.downloadNewImage()
+            }
+        }
     }
 
-    private fun initRecycler() {
-        binding.recyclerView.adapter = forecastAdapter
+    private fun searchCity() {
+        val et = EditText(context)
+        showInfoDialog(
+            title = "Search city",
+            message = "Enter the name of the city",
+            view = et
+        ) {
+            vModel.searchCity(et.text.toString())
+            binding.cityImage.performClick()
+        }
     }
+
+    override fun handleErrorCode(throwable: Throwable) {
+        super.handleErrorCode(throwable)
+        binding.noDataTv.visibility = View.VISIBLE
+    }
+
 
 }

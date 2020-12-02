@@ -2,23 +2,20 @@ package com.smerkis.weamther
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import com.smerkis.weamther.diTest.appModule
 import com.smerkis.weamther.diTest.imageRepoMockedModule
 import com.smerkis.weamther.diTest.networkMockedComponent
+import com.smerkis.weamther.repository.image.BOOK_IMAGES
 import com.smerkis.weamther.repository.image.ImageRepo
+import io.paperdb.Paper
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
-import okhttp3.mockwebserver.MockResponse
-import org.junit.Assert
 import org.junit.Assert.*
 import org.junit.Test
-import org.koin.core.component.inject
 import org.koin.core.context.startKoin
-import org.koin.test.KoinTest
 import org.koin.test.inject
 import retrofit2.HttpException
 import java.net.HttpURLConnection
+import java.util.*
 
 private const val TEST_URL = "https://live.staticflickr.com/424/19743825518_f4aa88de9b.jpg"
 private const val PERPAGE_TEST = 2
@@ -44,13 +41,16 @@ class ImageRepoInstrumentalTest : BaseInstrumentalTest() {
     }
 
     @Test
-    fun get_photo_list_from_flickr_ok() {
+    fun get_random_photoUrl() {
         mockResponse()
         runBlocking {
-            imageRepo.getPhotoListFromFlickr(TEST_CITY).collect {
+            imageRepo.downloadImage(TEST_CITY).let {
                 assertNotNull(it)
-                assertEquals(2, it?.photos?.photo?.size)
-                assertEquals(it?.photos?.photo?.get(0)?.title, TEST_CITY)
+                assertTrue(
+                    Regex(pattern = "(https?://(?:www\\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|www\\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|https?://(?:www\\.|(?!www))[a-zA-Z0-9]+\\.[^\\s]{2,}|www\\.[a-zA-Z0-9]+\\.[^\\s]{2,})").matches(
+                        it.toString()
+                    )
+                )
             }
         }
     }
@@ -60,11 +60,12 @@ class ImageRepoInstrumentalTest : BaseInstrumentalTest() {
     fun write_to_cahce_ok() {
         mockResponse()
         runBlocking {
-            imageRepo.writeToCache(bitmapMock, TEST_CITY).collect {
-                assertEquals(true, it)
+            imageRepo.writeToCache(bitmapMock, TEST_CITY)
+            val imagePath =
+                Paper.book(BOOK_IMAGES).read<String?>(city.toLowerCase(Locale.getDefault()).trim())
             }
         }
-    }
+
 
     @Test
     fun get_image_file_from_cahce_ok() {
@@ -82,7 +83,7 @@ class ImageRepoInstrumentalTest : BaseInstrumentalTest() {
     fun get_random_photo_ok() {
         mockResponse()
         runBlocking {
-            imageRepo.getRandomPhotoUrl(TEST_CITY).collect {
+            imageRepo.downloadImage(TEST_CITY).collect {
                 assertNotNull(it)
                 assertEquals(it, TEST_URL)
             }

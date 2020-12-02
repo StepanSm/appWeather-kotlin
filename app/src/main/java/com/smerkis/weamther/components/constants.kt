@@ -9,4 +9,4 @@ const val WEATHER_URL = "http://api.openweathermap.org/data/2.5/"
 const val IMAGE_URL = "https://www.flickr.com/services/rest/?"
 const val IMAGE_SIZE = "url_m"
 const val IMAGE_COUNT = 50
-const val CELSIUM = "u/00B0"
+const val IMAGE_FOLDER_NAME = "saved_image"
