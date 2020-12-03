@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="toolbar_image">180dp</dimen>
+    <dimen name="icon_weather">100dp</dimen>
+    <dimen name="temp_tv_size">30sp</dimen>
+
+</resources>

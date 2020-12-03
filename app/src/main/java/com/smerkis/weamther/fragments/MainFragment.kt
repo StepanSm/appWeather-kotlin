@@ -15,26 +15,24 @@ import com.smerkis.weamther.R
 import com.smerkis.weamther.activities.MainActivity
 import com.smerkis.weamther.components.WEATHER_ICON
 import com.smerkis.weamther.databinding.FragmentMainBinding
-import com.smerkis.weamther.getDateString
+import com.smerkis.weamther.getDateTime
 import com.smerkis.weamther.getTemperature
 import com.smerkis.weamther.model.WeatherInfo
 import com.smerkis.weamther.viewModels.MainViewModel
 import kotlinx.coroutines.FlowPreview
-import okhttp3.internal.format
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinApiExtension
 
 @KoinApiExtension
 @FlowPreview
-
-
 class MainFragment : BaseFragment(R.layout.fragment_main) {
 
     private val vModel: MainViewModel by viewModel()
     private val binding: FragmentMainBinding by viewBinding(FragmentMainBinding::bind)
     private val args by navArgs<MainFragmentArgs>()
     private val forecastAdapter = ForecastsAdapter()
-    private lateinit var weather: WeatherInfo
+    private var _weather: WeatherInfo? = null
+    private val weather get() = _weather!!
 
     companion object {
         const val SELECTED_CITY = "city_ch"
@@ -43,19 +41,20 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-
         setFragmentResultListener(MAIN_FRAGMENT) { _, bundle ->
             val city = bundle.getString(SELECTED_CITY)
-            if (city != null)
+            if (city != null) {
                 vModel.searchCity(city)
+            }
         }
     }
 
     @FlowPreview
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        weather = args.weather
+        _weather = args.weather
+
+
 
         createToolbar(binding.tb, shouldSetUpBtn = false)
         setObserver()
@@ -68,13 +67,17 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
         vModel.apply {
             imageCity.observe(viewLifecycleOwner) {
                 binding.cityImage.load(it)
-                binding.progressBar.visibility = View.GONE
+                photoIsLoaded(false)
             }
             weatherInfo.observe(viewLifecycleOwner) {
-                weather = it
+                _weather = it
                 downloadNewImage()
+                vModel.loadForecast()
                 fillWidget()
+            }
 
+            forecast.observe(viewLifecycleOwner) { forecast ->
+                forecastAdapter.submitList(forecast.list)
             }
 
             errorData.observe(viewLifecycleOwner) {
@@ -89,26 +92,25 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
     }
 
     private fun fillWidget() {
-        vModel.loadForecast().observe(viewLifecycleOwner) { forecast ->
-            forecastAdapter.submitList(forecast.list)
-        }
 
         binding.apply {
+
             cityImage.load(args.imagePath)
             recyclerView.adapter = forecastAdapter
             cityName.text = weather.name
+
             currentWeather.apply {
                 temp.text = getTemperature(weather.main.temp)
                 WEATHER_ICON[weather.weather[0].icon]?.let { iconWeather.load(it) }
-                range.text = getTemperature(weather.main.temp_max)
-                pressureData.text =
-                    format(getString(R.string.data_pressure), weather.main.pressure)
-                windData.text =
-                    format(getString(R.string.wind_info_data), weather.wind.speed)
+                range.text = weather.main.getRange()
+                pressureData.text = weather.main.getPressure()
+                windData.text = weather.wind.getSpeed()
                 humidityData.text = weather.main.getHumidity()
-                dateTime.text = getDateString(weather.dt.toLong())
+                dateTime.text = getDateTime(weather.dt.toLong())
             }
         }
+        vModel.loadForecast()
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -126,28 +128,30 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
             }
             currentWeather.iconWeather.setOnClickListener { showShortToast(weather.weather[0].description) }
             cityImage.setOnClickListener {
-                progressBar.visibility = View.VISIBLE
                 vModel.downloadNewImage()
+                photoIsLoaded(true)
             }
         }
     }
 
     private fun searchCity() {
         val et = EditText(context)
+        et.textSize = 20F
         showInfoDialog(
             title = "Search city",
             message = "Enter the name of the city",
             view = et
         ) {
             vModel.searchCity(et.text.toString())
-            binding.cityImage.performClick()
         }
     }
 
-    override fun handleErrorCode(throwable: Throwable) {
-        super.handleErrorCode(throwable)
-        binding.noDataTv.visibility = View.VISIBLE
+    private fun photoIsLoaded(loaded: Boolean) {
+        if (loaded) {
+            binding.progressBar.visibility = View.VISIBLE
+        } else {
+            binding.progressBar.visibility = View.INVISIBLE
+        }
+
     }
-
-
 }

@@ -2,17 +2,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white">
+    android:layout_height="match_parent">
 
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/icon_weather"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/icon_weather"
+        android:layout_height="@dimen/icon_weather"
         android:layout_margin="@dimen/margin_16"
         android:gravity="center"
         android:scaleType="centerCrop"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@drawable/_01d" />
@@ -22,13 +22,14 @@
         android:id="@+id/temp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_margin="@dimen/margin_16"
         android:fontFamily="sans-serif"
         android:gravity="center"
         android:textColor="@color/black"
-        android:textSize="50sp"
+        android:textSize="@dimen/temp_tv_size"
         app:layout_constraintBottom_toBottomOf="@+id/icon_weather"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
         app:layout_constraintTop_toTopOf="@+id/icon_weather"
         tools:text="-26C" />
 
@@ -40,8 +41,8 @@
         android:layout_marginTop="@dimen/margin_16"
         android:gravity="center"
         android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/icon_weather"
         tools:text="-26 -30" />
 
@@ -60,6 +61,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/weather_info_container"
             android:layout_width="match_parent"
+            android:padding="@dimen/margin_16"
             android:layout_height="match_parent"
             android:background="@color/green">
 
@@ -123,4 +125,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView"
         tools:text="18.02.3694" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

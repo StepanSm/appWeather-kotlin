@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Context.CONNECTIVITY_SERVICE
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.net.NetworkInfo
 import android.os.Build
 import android.widget.Toast
 import java.text.DecimalFormat
@@ -24,22 +23,22 @@ fun getTimeString(timeInMillis: Long): String {
     return formatter.format(Date(timeInMillis * 1000))
 }
 
+fun getDateTime(timeInMillis: Long): String {
+    return "${getDateString(timeInMillis)} ${getTimeString(timeInMillis)}"
+}
+
 private val df = DecimalFormat("###.#")
 
 fun getTemperature(temp: Double): String {
     return "${df.format(temp)}°C"
 }
 
-fun showLongToast(msg: String) {
-    Toast.makeText(MyApp.instance as Context, msg, Toast.LENGTH_LONG).show()
-}
-
- fun isNetworkAvailable(context: Context): Boolean {
+fun isNetworkAvailable(context: Context): Boolean {
     val connectivityManager = context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
 
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        val nw      = connectivityManager.activeNetwork ?: return false
+        val nw = connectivityManager.activeNetwork ?: return false
         val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
         return when {
             actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true

@@ -4,13 +4,10 @@ import com.smerkis.weamther.MyApp
 import com.smerkis.weamther.api.ApiFactory
 import com.smerkis.weamther.isNetworkAvailable
 import com.smerkis.weamther.model.WeatherInfo
-import com.smerkis.weamther.repository.BaseRepo
 import io.paperdb.Paper
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import java.util.*
-import kotlin.collections.HashMap
 
 private const val BOOK_CITY = "book_city"
 private const val BOOK_WEATHER = "book_weather"
@@ -18,19 +15,25 @@ private const val PAGE_CITY = "page_city"
 private const val PAGE_WEATHER = "page_weather"
 
 @FlowPreview
-class PaperWeatherRepo(private val apiFactory: ApiFactory) : BaseRepo(), WeatherRepo {
+class PaperWeatherRepo(private val apiFactory: ApiFactory) : WeatherRepo {
 
     override suspend fun loadWeather(city: String): Flow<WeatherInfo> {
 
-        return if (isNetworkAvailable(MyApp.instance)) {
-            val fromServer =
-                apiFactory.getWeatherApi().getWeather(city.toLowerCase(Locale.ROOT).trim())
+        var city = city.replace(regex = Regex("[^A-Za-zА-Яа-я]"), " ")
 
-            saveWeather(fromServer)
-            saveCity(fromServer.name)
-            weatherFromCache(fromServer.name)
-        } else {
-            weatherFromCache(city)
+        return flow {
+            if (isNetworkAvailable(MyApp.instance)) {
+                val fromServer =
+                    apiFactory.getWeatherApi().getWeather(city)
+
+                saveWeather(fromServer)
+                saveCity(fromServer.name)
+                getHistory()
+                city = fromServer.name
+            }
+            getHistory()[city]?.let {
+                emit(it)
+            }
         }
     }
 
@@ -52,12 +55,6 @@ class PaperWeatherRepo(private val apiFactory: ApiFactory) : BaseRepo(), Weather
                 emit(it)
             }
         }
-
-    private suspend fun weatherFromCache(city: String) = flow {
-        getHistory()[city.trim()]?.let {
-            emit(it)
-        }
-    }
 
     override suspend fun loadWeatherHistory(): Flow<HashMap<String, WeatherInfo>> {
         return flow { emit(getHistory()) }

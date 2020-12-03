@@ -10,9 +10,8 @@
     <string name="data_pressure">%smmHg</string>
     <string name="wind_info_title">Wind: </string>
     <string name="wind_info_data">%sm/s</string>
-
+    <string name="hint_swipe_forecast">swipe up to watch forecast</string>
     <string name="network_connect">Please check your internet connectivity and try again!</string>
-
     <string name="humidity_info_title">Humidity: </string>
     <string name="humidity_info_data">%s</string>
     <string name="temp">%s</string>

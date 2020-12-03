@@ -1,9 +1,7 @@
 package com.smerkis.weamther.viewModels
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.smerkis.weamther.model.WeatherInfo
 import com.smerkis.weamther.repository.weather.WeatherRepo
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect

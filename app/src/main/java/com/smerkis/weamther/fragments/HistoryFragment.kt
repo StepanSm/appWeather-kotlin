@@ -6,10 +6,8 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
-import coil.load
 import com.smerkis.weamther.R
 import com.smerkis.weamther.databinding.FragmentHistoryBinding
-import com.smerkis.weamther.databinding.FragmentMainBinding
 import com.smerkis.weamther.fragments.adapter.HistoryAdapter
 import com.smerkis.weamther.viewModels.HistoryViewModel
 import kotlinx.coroutines.FlowPreview
@@ -19,28 +17,28 @@ import org.koin.core.component.KoinApiExtension
 @FlowPreview
 class HistoryFragment : BaseFragment(R.layout.fragment_history), HistoryAdapter.CityClickContract {
 
-
     private val vModel: HistoryViewModel by inject()
     private val binding: FragmentHistoryBinding by viewBinding(FragmentHistoryBinding::bind)
     private val historyAdapter = HistoryAdapter()
-
 
     @KoinApiExtension
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        createToolbar(binding.tb)
+        createToolbar(binding.tb, title = "you recently watched")
+        setRecycler()
+        setObserver()
+        vModel.loadHistory()
+    }
 
+    private fun setRecycler() {
         historyAdapter.countryClickContract = this
         binding.rv.apply {
             adapter = historyAdapter
             setHasFixedSize(true)
 
         }
-        setObserver()
-        vModel.loadHistory()
     }
-
 
     private fun setObserver() {
 
@@ -50,7 +48,6 @@ class HistoryFragment : BaseFragment(R.layout.fragment_history), HistoryAdapter.
                 historyAdapter.replaceData(it)
                 historyAdapter.notifyDataSetChanged()
             }
-
 
             errorData.observe(viewLifecycleOwner) {
                 handleErrorCode(it)
@@ -68,6 +65,11 @@ class HistoryFragment : BaseFragment(R.layout.fragment_history), HistoryAdapter.
 
     override fun deleteCity(city: String) {
         vModel.deleteItemHistory(city)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        historyAdapter.countryClickContract = null
     }
 
 }

@@ -19,10 +19,6 @@ abstract class BaseFragment(layoutId: Int) :
     Fragment(layoutId) {
 
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-    }
-
     fun showInfoDialog(
         title: String,
         view: View? = null,
@@ -52,13 +48,7 @@ abstract class BaseFragment(layoutId: Int) :
         Toast.makeText(activity as Context, msg, Toast.LENGTH_LONG).show()
     }
 
-    protected open fun handleErrorCode(throwable: Throwable) {
-        if (throwable is UnknownHostException || throwable is ConnectException) {
-            showShortToast(getString(R.string.network_connect))
-        } else {
-            showShortToast(throwable.message.toString())
-        }
-    }
+
 
     @KoinApiExtension
     protected fun createToolbar(
@@ -78,6 +68,20 @@ abstract class BaseFragment(layoutId: Int) :
                     findNavController().popBackStack()
                 }
             }
+        }
+    }
+
+
+    protected open fun handleErrorCode(throwable: Throwable) {
+        when (throwable) {
+            is UnknownHostException,
+            is ConnectException -> showShortToast(getString(R.string.network_connect))
+            is HttpException -> {
+                when (throwable.code()) {
+                    404 -> showShortToast("information not found")
+                }
+            }
+            else -> showShortToast(throwable.message.toString())
         }
     }
 

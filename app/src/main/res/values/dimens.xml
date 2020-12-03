@@ -3,4 +3,7 @@
     <dimen name="toolbar_size">35dp</dimen>
     <dimen name="margin_16">16dp</dimen>
     <dimen name="margin_8">8dp</dimen>
+    <dimen name="toolbar_image">220dp</dimen>
+    <dimen name="icon_weather">200dp</dimen>
+    <dimen name="temp_tv_size">50sp</dimen>
 </resources>

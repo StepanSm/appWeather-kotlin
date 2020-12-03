@@ -1,6 +1,5 @@
 package com.smerkis.weamther
 
-import android.graphics.Bitmap
 import com.smerkis.weamther.api.ApiFactory
 import com.smerkis.weamther.diTest.imageRepoMockedModule
 import com.smerkis.weamther.diTest.networkMockedComponent

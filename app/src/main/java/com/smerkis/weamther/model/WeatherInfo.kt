@@ -1,6 +1,7 @@
 package com.smerkis.weamther.model
 
 import android.os.Parcelable
+import com.smerkis.weamther.getTemperature
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -62,6 +63,9 @@ data class Main(
         return "$humidity \u0025"
     }
 
+    fun getPressure() = pressure.toString()
+
+    fun getRange() = "min ${getTemperature(temp_min)}__max ${getTemperature(temp_max)}"
 }
 
 @Parcelize

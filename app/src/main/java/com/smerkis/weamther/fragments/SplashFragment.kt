@@ -3,12 +3,9 @@ package com.smerkis.weamther.fragments
 import android.os.Bundle
 import android.view.View
 import androidx.navigation.fragment.findNavController
-import by.kirich1409.viewbindingdelegate.viewBinding
-import com.smerkis.weamther.MyErrorHandler
 import com.smerkis.weamther.R
-import com.smerkis.weamther.databinding.FragmentSplashBinding
+import com.smerkis.weamther.activities.MainActivity
 import com.smerkis.weamther.viewModels.SplashViewModel
-import isdigital.errorhandler.ErrorHandler
 import kotlinx.coroutines.FlowPreview
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinApiExtension
@@ -18,11 +15,11 @@ import org.koin.core.component.KoinApiExtension
 class SplashFragment : BaseFragment(R.layout.fragment_splash) {
 
     private val viewModel: SplashViewModel by viewModel()
-    private val binding: FragmentSplashBinding by viewBinding(FragmentSplashBinding::bind)
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        (activity as MainActivity).window.navigationBarColor = 4
 
         viewModel.errorData.observe(viewLifecycleOwner) { exception ->
             handleErrorCode(exception)

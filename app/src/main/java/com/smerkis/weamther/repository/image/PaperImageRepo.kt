@@ -2,11 +2,9 @@ package com.smerkis.weamther.repository.image
 
 import coil.ImageLoader
 import coil.request.ImageRequest
-import coil.request.SuccessResult
 import com.smerkis.weamther.MyApp
 import com.smerkis.weamther.api.ApiFactory
 import com.smerkis.weamther.isNetworkAvailable
-import com.smerkis.weamther.repository.BaseRepo
 import io.paperdb.Paper
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -17,7 +15,7 @@ private const val PAGE_IMAGE = "page_image"
 
 
 @FlowPreview
-class PaperImageRepo(private val apiFactory: ApiFactory) : BaseRepo(), ImageRepo {
+class PaperImageRepo(private val apiFactory: ApiFactory) : ImageRepo {
 
     override suspend fun downloadImage(city: String): Flow<String> {
         return if (isNetworkAvailable(MyApp.instance)) {

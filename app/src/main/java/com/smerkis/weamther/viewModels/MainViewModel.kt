@@ -1,8 +1,6 @@
 package com.smerkis.weamther.viewModels
 
-import android.graphics.Bitmap
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.smerkis.weamther.model.ApiForecast
@@ -32,15 +30,14 @@ class MainViewModel : AbstractViewModel(), KoinComponent {
 
     val weatherInfo: MutableLiveData<WeatherInfo> by lazy { MutableLiveData<WeatherInfo>() }
     val imageCity: MutableLiveData<String> by lazy { MutableLiveData<String>() }
+    val forecast: MutableLiveData<ApiForecast> by lazy { MutableLiveData<ApiForecast>() }
 
     init {
         WeatherBus.instance.register(this)
     }
 
-    fun loadForecast(): LiveData<ApiForecast> {
-        val forecast: MutableLiveData<ApiForecast> = MutableLiveData()
+    fun loadForecast() {
         viewModelScope.launch {
-
             weatherRepo.loadCity().flatMapConcat { city ->
                 forecastRepo.downloadForecast(city)
             }.catch {
@@ -49,11 +46,10 @@ class MainViewModel : AbstractViewModel(), KoinComponent {
                 forecast.value = it
             }
         }
-        return forecast
     }
 
     fun searchCity(city: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             weatherRepo.loadWeather(city).catch {
                 errorData.postValue(it)
             }.collect {
@@ -77,6 +73,13 @@ class MainViewModel : AbstractViewModel(), KoinComponent {
     @Subscribe
     fun getWeather(weather: WeatherInfo) {
         Log.d("WeatherWorker", "MainViewModel weather loaded")
+        weatherInfo.postValue(weather)
+    }
+
+    @Subscribe
+    fun onError(err: Throwable) {
+        Log.d("WeatherWorker", "onError")
+        errorData.value = err
     }
 
     override fun onCleared() {
